@@ -1,0 +1,16 @@
+.page {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  text-align: center;
+  color: #e5f2ff;
+  background: linear-gradient(#175da0, #0b284b);
+}
+.code { margin: 0; color: var(--gold); font: 80px var(--font-display); }
+.page h1 { margin: 12px 0; font: 32px var(--font-display); }
+.page p { line-height: 1.6; }
+.page a { margin-top: 16px; padding: 12px 22px; border-radius: 8px; background: var(--gold); color: #54330b; font-weight: 800; text-decoration: none; }
+.page a:focus-visible { outline: 3px solid white; outline-offset: 4px; }
