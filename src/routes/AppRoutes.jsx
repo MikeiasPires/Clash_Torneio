@@ -1,11 +1,18 @@
 import { Navigate, Route, Routes } from 'react-router'
 import LoginPage from '../pages/Login/LoginPage.jsx'
 import NotFoundPage from '../pages/NotFound/NotFoundPage.jsx'
+import AppLayout from '../layouts/AppLayout.jsx'
 
 function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/login" replace />} />
+      <Route element={<AppLayout />}>
+        <Route path="/" element={<Navigate to="/home" replace />} />
+        <Route path="/home" element={null} />
+        <Route path="/perfil" element={null} />
+        <Route path="/trofeus" element={null} />
+        <Route path="/historico" element={null} />
+      </Route>
       <Route path="/login" element={<LoginPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>

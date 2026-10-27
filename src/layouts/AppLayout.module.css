@@ -1,0 +1,23 @@
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+  min-height: 100dvh;
+  background:
+    radial-gradient(ellipse at 50% 14%, #369ae388, transparent 58%),
+    repeating-conic-gradient(#ffffff04 0% 25%, transparent 0% 50%) 50% / 74px 74px,
+    linear-gradient(180deg, #175da0, #123d73 68%, #0b284b);
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  padding: max(16px, env(safe-area-inset-top, 0px))
+    max(12px, env(safe-area-inset-right, 0px))
+    24px max(12px, env(safe-area-inset-left, 0px));
+}
+
+@media (min-width: 600px) {
+  .content { padding: 24px; }
+}
