@@ -1,0 +1,69 @@
+.page { width: 100%; max-width: 620px; margin: 0 auto; }
+.header { padding: 12px 0 24px; text-align: center; }
+.emblem {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 60px;
+  margin: 0 auto 16px;
+  border: 2px solid #ffd578;
+  border-radius: 14px 14px 22px 22px;
+  background: linear-gradient(135deg, #318fdb, #125092);
+  color: var(--gold);
+  box-shadow: inset 0 0 0 3px #163d70, 0 4px 0 #09294e;
+}
+.emblem svg { width: 32px; height: 32px; }
+.eyebrow { margin: 0 0 8px; color: var(--gold); font-size: 10px; font-weight: 800; letter-spacing: 2px; }
+.header h1 { margin: 0; color: #fff7e7; font-family: var(--font-display); font-size: clamp(26px, 6vw, 36px); font-weight: 400; text-shadow: 0 3px 0 #092c55; }
+.description { margin: 8px 0 0; color: #d4eaff; font-size: 13px; line-height: 1.5; }
+.listHeading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; color: #d4eaff; }
+.listHeading h2 { margin: 0; font-size: 14px; font-weight: 800; }
+.listHeading > span { font-size: 11px; }
+.ranking { display: grid; gap: 9px; margin: 0; padding: 0; list-style: none; }
+.player {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  min-height: 72px;
+  padding: 12px;
+  border: 2px solid #102e50;
+  border-radius: 12px;
+  background: linear-gradient(#fffdf6, #e6edf4);
+  box-shadow: inset 0 2px 0 #ffffffb3, 0 3px 0 #082744;
+}
+.position { display: grid; place-items: center; width: 32px; height: 34px; border-radius: 8px; background: #d2dfeb; color: #365777; font-family: var(--font-display); font-size: 20px; }
+.identity { min-width: 0; }
+.identity h3 { margin: 0; color: #183f69; font-size: 14px; font-weight: 800; line-height: 1.3; }
+.identity p { margin: 5px 0 0; color: #52677d; font-size: 11px; line-height: 1.5; }
+.wins { text-align: center; color: #29496a; }
+.wins strong { display: block; font-family: var(--font-display); font-size: 24px; font-weight: 400; line-height: 1.1; }
+.wins > span { font-size: 10px; font-weight: 800; }
+.podiumLabel { display: block; margin-bottom: 4px; font-size: 9px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase; }
+.gold { min-height: 92px; border-color: #eeb94d; background: linear-gradient(115deg, #fff4cc, #ffda78); box-shadow: inset 0 2px 0 #fff8da, 0 4px 0 #94621c, 0 6px 18px #00182c30; color: #77500f; }
+.gold, .silver, .bronze { grid-template-columns: 32px 64px minmax(0, 1fr) auto; }
+.gold .position { background: linear-gradient(#ffe997, #efb537); color: #68400c; border: 1px solid #c3902c; }
+.portrait { position: relative; display: grid; place-items: center; width: 64px; height: 64px; padding-bottom: 6px; }
+.avatar { display: grid; place-items: center; width: 34px; height: 34px; overflow: hidden; border: 2px solid #c3902c; border-radius: 50%; background: #163d70; color: #fff4cc; font-size: 18px; font-weight: 800; }
+.avatar img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.laurel { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+.gold .identity h3, .gold .wins { color: #68400c; }
+.gold .identity h3 { font-size: 16px; }
+.silver { min-height: 84px; border-color: #b8cddd; background: linear-gradient(115deg, #f5faff, #cddde9); color: #466079; }
+.silver .position { background: #b7cddd; color: #29496a; border: 1px solid #91aec4; }
+.silver .avatar { border-color: #91aec4; background: #29496a; color: #f5faff; }
+.bronze { min-height: 78px; border-color: #c9966c; background: linear-gradient(115deg, #fff0e2, #e9c3a1); color: #805032; }
+.bronze .position { background: #dbad87; color: #674025; border: 1px solid #b6835b; }
+.bronze .avatar { border-color: #b6835b; background: #674025; color: #fff0e2; }
+.notice { margin: 18px 0 0; color: #b1cee7; text-align: center; font-size: 11px; }
+@media (max-width: 359px) {
+  .player { gap: 8px; padding: 10px 8px; grid-template-columns: 28px minmax(0, 1fr) auto; }
+  .position { width: 28px; }
+  .gold, .silver, .bronze { grid-template-columns: 28px 52px minmax(0, 1fr) auto; }
+  .portrait { width: 52px; height: 52px; }
+  .avatar { width: 28px; height: 28px; font-size: 15px; }
+  .identity h3 { font-size: 13px; }
+  .gold .identity h3 { font-size: 14px; }
+  .identity p { font-size: 10px; }
+  .wins strong { font-size: 22px; }
+}
