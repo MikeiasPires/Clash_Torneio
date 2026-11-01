@@ -1,13 +1,28 @@
 import { useState } from 'react'
+import { Link, useNavigate } from 'react-router'
+import { useAuth } from '../../auth/useAuth.js'
+import { useInvite } from '../../hooks/useInvite.js'
+import { loginAccount } from '../../services/accountApi.js'
 import styles from './LoginPage.module.css'
 
 function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [message, setMessage] = useState('')
+  const [busy, setBusy] = useState(false)
+  const auth = useAuth()
+  const invite = useInvite()
+  const navigate = useNavigate()
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault()
-    setMessage('A autenticação ainda não está conectada. O login estará disponível em breve.')
+    const form = new FormData(event.currentTarget)
+    setBusy(true); setMessage('')
+    try {
+      const data = await loginAccount({ email: form.get('email'), password: form.get('password') })
+      auth.acceptUser(data.user)
+      navigate(invite.token ? '/entrar-grupo' + invite.suffix : '/home', { replace: true })
+    } catch (error) { setMessage(error.message) }
+    finally { setBusy(false) }
   }
 
   return (
@@ -27,6 +42,7 @@ function LoginPage() {
         <div className={styles['card-heading']}>
           <p className={styles['eyebrow']}>PREPARE SEU DECK</p>
           <h1 id="login-title">De volta à arena!</h1>
+          {invite.invite && <p className={styles.description}>Entre para participar de {invite.invite.name}.</p>}
         </div>
         <form onSubmit={handleSubmit} onChange={() => setMessage('')}>
           <div className={styles['field']}>
@@ -42,9 +58,13 @@ function LoginPage() {
               </button>
             </div>
           </div>
-          <button className={styles['submit-button']} type="submit">Entrar na arena <span aria-hidden="true">→</span></button>
+          <button className={styles['submit-button']} type="submit" disabled={busy}>{busy ? 'Entrando…' : 'Entrar na arena'} <span aria-hidden="true">→</span></button>
           <p className={styles['message']} role="status">{message}</p>
         </form>
+        <p className={styles.footer}>
+          Ainda não tem conta?{' '}
+          <Link to={'/cadastro' + invite.suffix}>Cadastre-se agora</Link>
+        </p>
       </section>
       <p className={styles['page-footer']}>MONTE SEU DECK. REÚNA OS AMIGUI. VÁ PRA BATALHA.</p>
     </main>

@@ -14,7 +14,7 @@
 
 .items {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 6px;
   max-width: 560px;
   margin: 0 auto;
@@ -42,6 +42,7 @@
 }
 
 .link svg { width: 20px; height: 20px; }
+.profilePhoto { width: 24px; height: 24px; border: 1px solid #ffdc80; border-radius: 50%; object-fit: cover; }
 .link:hover { background: #ffffff0d; }
 .link:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
 

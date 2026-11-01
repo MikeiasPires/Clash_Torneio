@@ -1,0 +1,26 @@
+.field { display: grid; gap: 12px; min-width: 0; }
+.title { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0; color: #335575; font-size: 12px; font-weight: 800; }
+.title span { color: #7b90a4; font-size: 10px; font-weight: 500; }
+.photoRow { display: flex; align-items: center; gap: 16px; padding: 16px; border: 1px solid #dce7f0; border-radius: 16px; background: #f1f6fa; }
+.preview { display: grid; place-items: center; flex: 0 0 72px; width: 72px; height: 72px; overflow: hidden; border: 3px solid #fff; border-radius: 50%; background: #dbe9f5; color: #688dae; box-shadow: 0 0 0 1px #cadbea; }
+.preview img { width: 100%; height: 100%; object-fit: cover; }
+.preview > svg { width: 36px; height: 36px; }
+.uploadContent { display: grid; min-width: 0; gap: 7px; justify-items: start; }
+.field .upload { position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 44px; padding: 9px 12px; border: 1px solid #c3d5e6; border-radius: 10px; background: #fff; color: #2b5c87; font-size: 12px; font-weight: 800; cursor: pointer; }
+.upload svg { flex-shrink: 0; width: 17px; height: 17px; }
+.upload span { line-height: 1.4; }
+.field .fileInput[type=file] { position: absolute; inset: 0; width: 100%; height: 100%; min-height: 0; margin: 0; padding: 0; opacity: 0; border: 0; cursor: pointer; }
+.upload:focus-within { outline: 3px solid #65a9e3; outline-offset: 3px; }
+.upload:has(input:disabled) { opacity: .5; cursor: not-allowed; }
+.field small { color: #647a90; font-size: 10px; line-height: 1.5; }
+.field .undo { min-height: 32px; padding: 4px 0; border: 0; background: transparent; color: #4e7192; font: inherit; font-size: 11px; text-decoration: underline; cursor: pointer; }
+.undo:focus-visible { outline: 3px solid #65a9e3; outline-offset: 3px; }
+.largePreview .photoRow { flex-direction: column; gap: 16px; padding: 20px; }
+.largePreview .preview { flex: 0 0 auto; width: min(100%, 184px); height: auto; aspect-ratio: 1; border-width: 4px; }
+.largePreview .preview > svg { width: 64px; height: 64px; }
+.largePreview .uploadContent { justify-items: center; text-align: center; }
+@media (max-width: 359px) {
+  .photoRow { gap: 12px; padding: 12px; }
+  .preview { flex-basis: 58px; width: 58px; height: 58px; }
+  .field .upload { gap: 5px; padding-inline: 9px; font-size: 11px; }
+}

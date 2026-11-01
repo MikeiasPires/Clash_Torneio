@@ -1,0 +1,14 @@
+.account { margin-top: 22px; padding: 16px; border: 1px solid #cddfeb; border-radius: 14px; background: #edf4fa; text-align: left; }
+.label { margin: 0 0 8px; color: #6c849a; font-size: 9px; font-weight: 900; letter-spacing: 1px; }
+.email { margin: 0; color: #29496a; font-size: 13px; font-weight: 800; overflow-wrap: anywhere; }
+.tag { margin: 5px 0 0; color: #476e90; font-size: 12px; line-height: 1.6; }
+.help { margin: 12px 0 0; color: #52677d; font-size: 12px; line-height: 1.7; }
+.actions { display: grid; gap: 9px; margin-top: 16px; }
+.actions button,.useTag { min-height: 44px; padding: 10px 12px; border: 1px solid #bacfe1; border-radius: 10px; background: #fff; color: #315a7e; font: inherit; font-size: 12px; font-weight: 800; cursor: pointer; }
+.actions .primary { border-color: #dfb352; background: #ffdc80; color: #65440e; }
+.actions button:disabled,.useTag:disabled { opacity: .5; cursor: not-allowed; }
+.account :focus-visible,.useTag:focus-visible { outline: 3px solid #2474b9; outline-offset: 3px; }
+.error { margin: 12px 0 0; color: #9b3448; font-size: 12px; line-height: 1.6; }
+.linkedTag { display: grid; gap: 8px; padding: 12px; border: 1px solid #d0e0ed; border-radius: 10px; background: #edf4fa; color: #52677d; font-size: 12px; line-height: 1.6; }
+.linkedTag p { margin: 0; }
+.useTag { justify-self: start; }

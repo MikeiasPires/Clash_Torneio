@@ -3,18 +3,29 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "engines": {
+    "node": "24.x"
+  },
   "scripts": {
+    "api:player": "node --env-file-if-exists=.env scripts/check-clash-api.mjs",
+    "groups:create": "node --env-file-if-exists=.env scripts/create-group.mjs",
+    "groups:sync": "node --env-file-if-exists=.env scripts/sync-groups.mjs",
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
+    "test": "node --test",
+    "test:http": "node scripts/check-account-flow.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.118.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
-    "react-router": "^8.5.0"
+    "react-router": "^8.5.0",
+    "sharp": "^0.35.5"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.14",
     "@eslint/js": "^10.0.1",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",

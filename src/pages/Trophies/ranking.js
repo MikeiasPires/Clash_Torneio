@@ -1,6 +1,15 @@
+import championAvatar from '../../assets/champion-avatar.svg'
+
 // Dados de exemplo até a integração com o backend.
 export const ranking = [
-  { id: 1, name: 'Rei da Arena', wins: 128, matches: 160 },
+  {
+    id: 1,
+    name: 'Rei da Arena',
+    wins: 128,
+    matches: 160,
+    avatarUrl: championAvatar,
+    phrase: 'A coroa é minha, mas a resenha é de todos os Amigui!',
+  },
   { id: 2, name: 'Mestre do Deck', wins: 115, matches: 150 },
   { id: 3, name: 'Lenda dos Amigui', wins: 104, matches: 142 },
   { id: 4, name: 'Cavaleiro Azul', wins: 96, matches: 135 },

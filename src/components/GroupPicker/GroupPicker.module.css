@@ -1,0 +1,16 @@
+.picker { display: flex; align-items: end; flex-wrap: wrap; gap: 12px; margin: 0 0 24px; padding: 16px; border: 1px solid #87afd459; border-radius: 12px; background: #0b294b99; text-align: left; }
+.picker label { display: grid; flex: 1 1 180px; gap: 7px; color: #d7eaff; font-size: 12px; font-weight: 800; }
+.picker select { width: 100%; min-height: 44px; padding: 8px 10px; border: 1px solid #8ba8c2; border-radius: 8px; background: #f3f8fc; color: #203955; font: inherit; }
+.picker a { padding: 10px 0; color: #ffdc80; font-size: 12px; font-weight: 800; }
+.picker p { flex-basis: 100%; margin: 0; color: #d7eaff; font-size: 12px; line-height: 1.6; }
+.picker [role=alert] { color: #ffb3bb; }
+.picker :focus-visible { outline: 3px solid #ffdc80; outline-offset: 3px; }
+.home { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 12px; margin-bottom: 20px; padding: 15px; border-color: #7faacf42; border-radius: 18px; background: #0d3054a6; }
+.home label { min-width: 0; gap: 8px; color: #b5cde3; font-size: 9px; letter-spacing: 1.3px; }
+.home select { min-width: 0; min-height: 48px; padding: 10px 12px; border-color: #6a94b570; border-radius: 11px; background: #1b466f; color: #f4f8ff; font-size: 14px; letter-spacing: 0; text-overflow: ellipsis; }
+.home select:disabled { opacity: .65; }
+.home a { display: grid; place-items: center; min-height: 48px; padding: 10px 13px; border: 1px solid #e9c16a47; border-radius: 11px; background: #ffd16b0c; color: #ffe19b; text-decoration: none; }
+.home p { grid-column: 1 / -1; }
+@media (max-width: 600px) and (max-height: 740px) {
+  .home { margin-bottom: 16px; padding: 12px; }
+}

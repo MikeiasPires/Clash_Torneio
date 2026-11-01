@@ -1,0 +1,222 @@
+.page { width: 100%; max-width: 740px; margin: 0 auto; padding: 12px 0 24px; }
+.header { text-align: center; margin-bottom: 30px; }
+.emblem {
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 18px;
+  border: 2px solid #ffdc86;
+  border-radius: 16px;
+  color: #ffe39a;
+  background: linear-gradient(145deg, #3188c8, #174c83);
+  box-shadow: inset 0 2px 0 #ffffff30, 0 4px 0 #0b2d50;
+  transform: rotate(-5deg);
+}
+.emblem svg { width: 32px; height: 32px; }
+.eyebrow { margin: 0 0 9px; font-size: 10px; font-weight: 800; letter-spacing: 2px; color: #bbdaf5; }
+.header h1 { margin: 0; font: 400 clamp(28px, 5vw, 38px)/1.15 var(--font-display); color: #fff0c3; text-shadow: 0 3px 0 #0b2b50; }
+.description { margin: 12px 0 0; color: #c7def2; font-size: 13px; line-height: 1.6; }
+.listHeading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; color: #fff1ce; }
+.listHeading h2 { margin: 0; font: 400 20px var(--font-display); }
+.listHeading > span { padding: 5px 10px; border: 1px solid #92bee536; border-radius: 20px; color: #c8e1f6; background: #062b5055; font-size: 11px; font-weight: 800; white-space: nowrap; }
+
+.matches { display: grid; gap: 24px; padding: 0; margin: 0; list-style: none; }
+.matchCard {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #7096b9;
+  border-radius: 18px;
+  background: #112e50;
+  box-shadow: 0 5px 0 #071e37, 0 8px 0 #23517b, 0 16px 28px #02172d40;
+}
+.matchCard::before {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  inset: 0 22% auto;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #cae7ff, transparent);
+  pointer-events: none;
+}
+.matchHeading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 13px 20px;
+  border-bottom: 1px solid #81b7e22b;
+  background: linear-gradient(100deg, #376491, #20476f);
+  box-shadow: inset 0 1px #ffffff20;
+  color: #e7f3ff;
+}
+.mode { display: flex; align-items: center; gap: 10px; font-size: 10px; font-weight: 800; letter-spacing: 1.4px; }
+.mode span { padding: 4px 8px; border: 1px solid #e9c27070; border-radius: 5px; background: #0c2a48; color: #ffdc80; letter-spacing: 0; box-shadow: inset 0 1px #ffffff10; }
+.matchHeading time { font-size: 10px; color: #c4dbef; font-weight: 700; }
+.arena {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 116px minmax(0, 1fr);
+  gap: 12px;
+  align-items: stretch;
+  padding: 23px 20px 20px;
+  background:
+    radial-gradient(ellipse at 0 20%, #2c8de327, transparent 65%),
+    radial-gradient(ellipse at 100% 20%, #cf4d6820, transparent 65%),
+    repeating-conic-gradient(#ffffff02 0% 25%, transparent 0% 50%) 50% / 26px 26px,
+    linear-gradient(180deg, #163d64, #102a48);
+}
+.player {
+  position: relative;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 23px 10px 15px;
+  border: 1px solid #8aafcc25;
+  border-radius: 13px;
+  text-align: center;
+  background: linear-gradient(180deg, #42617c28, #06223d40);
+  box-shadow: inset 0 1px #ffffff09;
+}
+.left { --side-color: #80d3ff; --side-bg: #236fa8; --side-dark: #123e70; }
+.right { --side-color: #ffabbf; --side-bg: #ac4b70; --side-dark: #652e53; }
+.portrait { position: relative; width: 72px; height: 81px; flex-shrink: 0; }
+.avatar {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  color: var(--side-color);
+  filter: drop-shadow(0 5px 0 #041b30aa);
+}
+.avatar::before {
+  content: '';
+  position: absolute;
+  inset: 3px 6px 4px;
+  background: linear-gradient(135deg, #ffffff40, transparent 45%), linear-gradient(160deg, var(--side-bg), var(--side-dark));
+  clip-path: polygon(0 5%, 50% 0, 100% 5%, 100% 53%, 90% 72%, 72% 87%, 50% 100%, 28% 87%, 10% 72%, 0 53%);
+}
+.crest { position: absolute; inset: 0; width: 100%; height: 100%; }
+.avatarInitial { z-index: 1; margin-bottom: 6px; color: #f5faff; font: 34px var(--font-display); text-shadow: 0 3px 0 var(--side-dark); }
+.championCrown { position: absolute; z-index: 2; top: -20px; left: calc(50% - 16px); width: 32px; height: 28px; color: #ffdc78; filter: drop-shadow(0 2px 0 #8e601e); transform: rotate(-9deg); }
+.player h3 { flex: 1; width: 100%; margin: 14px 0 9px; color: #e3effb; font: 400 20px/1.15 var(--font-display); text-shadow: 0 2px #061f38; overflow-wrap: anywhere; }
+.crowns { display: flex; gap: 4px; margin: 0 0 13px; }
+.crowns svg { width: 19px; height: 19px; }
+.earnedCrown { color: #ffcf5f; filter: drop-shadow(0 2px 0 #9f651b); }
+.emptyCrown { color: #4b6680; }
+.winner {
+  border-color: #caa557;
+  background: radial-gradient(ellipse at 50% 0, #ffdb7320, transparent 75%), linear-gradient(155deg, #79643b3b, #44371928);
+  box-shadow: inset 0 1px #ffe8a75c, inset 0 0 20px #ffd26508, 0 0 22px #e8ae3610;
+}
+.winner::after { content: ''; position: absolute; bottom: -1px; left: 25%; right: 25%; height: 2px; background: #ffe091; box-shadow: 0 0 12px #ffd26380; }
+.winner .avatar { color: #ffdc78; }
+.winner h3 { color: #ffebaf; }
+.winnerBadge, .resultBadge { display: inline-flex; justify-content: center; align-items: center; gap: 5px; min-height: 26px; padding: 5px 12px; border-radius: 5px; font-size: 10px; line-height: 1.4; font-weight: 800; }
+.winnerBadge { color: #53340c; background: linear-gradient(#ffe7a1, #efbb50); border: 1px solid #ffdf8d; box-shadow: inset 0 1px #fff2c2, 0 2px 0 #805721; text-transform: uppercase; letter-spacing: .5px; }
+.resultBadge { color: #afc5d9; background: #0c2843; border: 1px solid #6a8baa55; }
+.badgeCrown { width: 13px; height: 13px; flex-shrink: 0; }
+.scoreboard { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 2px; }
+.duelEmblem {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 53px;
+  height: 53px;
+  margin-bottom: 15px;
+  border: 1px solid #7698b5;
+  border-radius: 15px;
+  background: linear-gradient(135deg, #345d83, #102e4d);
+  box-shadow: inset 0 1px #ffffff25, 0 4px 0 #071d34;
+  color: #f2d48e;
+  transform: rotate(45deg);
+}
+.duelEmblem svg { width: 37px; height: 37px; transform: rotate(-45deg); filter: drop-shadow(0 2px #071d34); }
+.scoreLabel { font-size: 8px; font-weight: 800; letter-spacing: 2px; color: #9cb9d0; }
+.score { display: flex; justify-content: center; align-items: center; gap: 11px; margin: 8px 0 11px; font: 400 44px/1 var(--font-display); color: #93adc4; text-shadow: 0 3px #051c33; }
+.scoreDivider { font: 25px var(--font-display); color: #6484a0; }
+.score .winningScore { color: #ffdc7a; filter: drop-shadow(0 0 8px #f3bd4220); }
+.finished { display: flex; align-items: center; gap: 5px; font-size: 9px; color: #a7c5da; font-weight: 700; }
+.finished > span { width: 5px; height: 5px; border-radius: 50%; background: #79ceb4; box-shadow: 0 0 6px #79ceb455; }
+.matchFooter { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; padding: 12px 20px; border-top: 1px solid #6483a02e; background: linear-gradient(100deg, #1d3c59, #122c46); }
+.footerLabel { color: #93b1c9; font-size: 8px; font-weight: 800; letter-spacing: 1.4px; }
+.footerResult { display: flex; align-items: center; gap: 7px; color: #f1d797; font-size: 11px; font-weight: 800; }
+.drawCard .footerResult { color: #c0d9ee; }
+.headToHead { border-top: 1px solid #6483a04d; }
+.rivalToggle {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 48px;
+  padding: 12px 20px;
+  list-style: none;
+  background: #0b2540;
+  color: #d7eaff;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.rivalToggle::-webkit-details-marker { display: none; }
+.rivalToggle > svg { width: 18px; height: 18px; flex-shrink: 0; color: #ffdc80; }
+.rivalToggle .rivalChevron { margin-left: auto; width: 16px; height: 16px; color: #a7c5da; }
+.rivalToggle:hover { background: #173a5c; }
+.rivalToggle:focus-visible { position: relative; z-index: 2; outline: 3px solid #ffdc80; outline-offset: -4px; border-radius: 6px; }
+.headToHead[open] .rivalToggle { color: #ffe39a; }
+.headToHead[open] .rivalChevron { transform: rotate(180deg); }
+.rivalPanel { padding: 22px 20px 18px; border-top: 1px solid #6483a033; background: radial-gradient(ellipse at 50% 0, #e8ae3612, transparent 70%), #102c49; text-align: center; }
+.rivalEyebrow { margin: 0 0 8px; color: #ffdc80; font-size: 9px; font-weight: 800; letter-spacing: 1.5px; }
+.rivalTotal { margin: 0 0 18px; color: #c4dbef; font-size: 12px; }
+.rivalPlayers { display: grid; grid-template-columns: minmax(0, 1fr) 28px minmax(0, 1fr); gap: 10px; align-items: center; }
+.rivalPlayer { min-width: 0; align-self: stretch; padding: 16px 10px; border: 1px solid #8aafcc40; border-radius: 12px; background: #06223d55; }
+.rivalPlayer h4 { margin: 0 0 14px; color: #f1e7c9; font: 400 clamp(17px, 4vw, 22px)/1.3 var(--font-display); overflow-wrap: anywhere; }
+.rivalNumbers { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 0; }
+.rivalNumbers > div { display: flex; flex-direction: column; gap: 5px; }
+.rivalNumbers dt { color: #c4dbef; font-size: 10px; font-weight: 700; }
+.rivalNumbers dd { margin: 0; font: 400 32px/1.2 var(--font-display); }
+.rivalWins { color: #95e2bd; }
+.rivalLosses { color: #ffb3bb; }
+.rivalVersus { color: #91acc4; font: 400 28px var(--font-display); }
+.rivalDraws { display: inline-block; margin: 16px 0 0; padding: 6px 14px; border: 1px solid #8aafcc40; border-radius: 20px; color: #d2e4f5; background: #0b2540; font-size: 11px; font-weight: 800; }
+.rivalNote { margin: 12px 0 0; color: #b4cfe7; font-size: 10px; line-height: 1.6; }
+.srOnly { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+.notice { margin: 28px 0 0; color: #b4cfe7; font-size: 11px; text-align: center; }
+.notice a,.empty a { color: #ffdc80; }
+.pagination { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 26px; color: #c7def2; font-size: 11px; }
+.pagination button { min-height: 44px; padding: 8px 12px; border: 1px solid #8ba8c2; border-radius: 8px; background: #0b294b; color: #ffdc80; font: inherit; font-weight: 800; cursor: pointer; }
+.pagination button:disabled { opacity: .45; cursor: not-allowed; }
+.pagination button:focus-visible { outline: 3px solid #ffdc80; outline-offset: 3px; }
+.empty { padding: 32px 20px; border: 1px solid #ffffff26; border-radius: 14px; text-align: center; color: #d1e5f7; line-height: 1.6; }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .matchCard { transition: border-color .2s, box-shadow .2s; }
+  .matchCard:hover { border-color: #accce6; box-shadow: 0 5px 0 #071e37, 0 8px 0 #23517b, 0 18px 32px #02172d60; }
+}
+@media (max-width: 480px) {
+  .rivalToggle { padding-inline: 13px; }
+  .rivalPanel { padding-inline: 12px; }
+  .rivalPlayers { gap: 6px; grid-template-columns: minmax(0, 1fr) 18px minmax(0, 1fr); }
+  .rivalPlayer { padding-inline: 6px; }
+  .arena { grid-template-columns: minmax(0, 1fr) 76px minmax(0, 1fr); gap: 7px; padding: 23px 10px 14px; }
+  .player { padding: 21px 6px 12px; }
+  .portrait { width: 60px; height: 68px; }
+  .avatarInitial { font-size: 29px; }
+  .player h3 { font-size: 17px; }
+  .score { gap: 6px; font-size: 36px; }
+  .duelEmblem { width: 41px; height: 41px; border-radius: 11px; }
+  .duelEmblem svg { width: 29px; height: 29px; }
+  .winnerBadge, .resultBadge { padding: 4px 7px; font-size: 9px; }
+  .matchHeading, .matchFooter { padding: 11px 13px; }
+  .mode { font-size: 9px; gap: 6px; letter-spacing: .7px; }
+  .matchHeading time { font-size: 9px; }
+  .crowns { gap: 3px; }
+  .crowns svg { width: 16px; height: 16px; }
+}
+@media (max-width: 340px) {
+  .arena { grid-template-columns: minmax(0, 1fr) 58px minmax(0, 1fr); gap: 4px; padding-inline: 7px; }
+  .player h3 { font-size: 15px; }
+  .winnerBadge { letter-spacing: 0; gap: 3px; padding-inline: 4px; }
+  .score { font-size: 29px; gap: 4px; }
+  .scoreLabel { letter-spacing: 1px; }
+}

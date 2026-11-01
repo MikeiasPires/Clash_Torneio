@@ -1,0 +1,35 @@
+.page { width: 100%; max-width: 740px; margin: 0 auto; }
+.header { padding: 12px 0 28px; text-align: center; }
+.header > p { margin: 0 0 10px; color: var(--gold); font-size: 10px; font-weight: 900; letter-spacing: 2px; }
+.header h1 { margin: 0 0 12px; color: #fff0c3; font: 400 clamp(28px,6vw,38px)/1.2 var(--font-display); text-shadow: 0 3px #092c55; }
+.header > span { color: #c7def2; font-size: 13px; line-height: 1.7; }
+.card { display: grid; gap: 10px; margin: 0 0 22px; padding: 22px; border: 1px solid #87afd459; border-radius: 16px; background: #0b294bcc; color: #d7eaff; }
+.card h2 { margin: 0 0 8px; color: #ffdc80; font: 400 25px var(--font-display); }
+.card label { margin-top: 6px; font-size: 12px; font-weight: 800; }
+.card input,.card textarea { width: 100%; min-width: 0; padding: 12px; border: 2px solid #8ba8c2; border-radius: 8px; background: #f3f8fc; color: #203955; font: inherit; font-size: 16px; }
+.card textarea { resize: vertical; }
+.card p { margin: 0; color: #b9d4eb; font-size: 12px; line-height: 1.7; }
+.card button { min-height: 44px; padding: 10px 16px; border: 1px solid #e6b54b; border-radius: 8px; background: #ffdc80; color: #53340c; font: inherit; font-size: 13px; font-weight: 900; cursor: pointer; }
+.card button:disabled { opacity: .5; cursor: not-allowed; }
+.card :focus-visible { outline: 3px solid #ffdc80; outline-offset: 3px; }
+.groupHeading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+.groupHeading > span { padding: 5px 8px; border: 1px solid #8aafcc40; border-radius: 20px; color: #95e2bd; font-size: 10px; font-weight: 800; }
+.actions { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin: 8px 0; }
+.actions .secondary { border-color: #8ba8c2; background: transparent; color: #d7eaff; }
+.actions a { padding: 10px 0; color: #ffdc80; font-size: 12px; font-weight: 800; }
+.members { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.members li { padding: 12px 0 0; border-top: 1px solid #8aafcc33; }
+.members li > div { display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; margin-bottom: 4px; }
+.members strong { font-size: 14px; }.members span { color: #b9d4eb; font-size: 11px; }
+.memberPhoto { width: 36px; height: 36px; border: 1px solid #ffdc80; border-radius: 50%; object-fit: cover; }
+.sectionTitle { margin: 10px 0 0; color: #fff0c3; font-size: 15px; }
+.memberForm { display: grid; gap: 10px; margin-top: 12px; padding-top: 18px; border-top: 1px solid #8aafcc33; }
+.inviteLink { display: grid; gap: 10px; }.inviteLink input { font-size: 12px; }
+.card .removeMember { min-height: 40px; margin-top: 8px; padding: 8px 10px; border-color: #d29b9b; background: transparent; color: #ffc0c7; font-size: 11px; }
+.deleteSection { display: grid; gap: 10px; margin-top: 14px; padding-top: 18px; border-top: 1px solid #d29b9b55; }
+.card .danger { border-color: #e59ba5; background: #6e293b; color: #ffe8ec; }
+.confirmation { padding: 16px; border: 1px solid #e59ba5; border-radius: 12px; background: #3f273a; }
+.confirmation h3 { margin: 0 0 10px; color: #ffe8ec; font-size: 16px; }
+.message { margin: 0 0 16px; color: #95e2bd; font-size: 13px; line-height: 1.7; }.message:empty { display: none; }
+.error { padding: 12px; border: 1px solid #ffb3bb80; border-radius: 8px; background: #502839; color: #ffe4e7; font-size: 13px; line-height: 1.7; }
+.notice { margin: 20px 0; color: #b4cfe7; font-size: 11px; line-height: 1.7; text-align: center; }

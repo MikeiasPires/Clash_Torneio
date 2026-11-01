@@ -1,4 +1,7 @@
-import { ranking } from './ranking.js'
+import { Link, useSearchParams } from 'react-router'
+import { ranking as demoRanking } from './ranking.js'
+import GroupPicker from '../../components/GroupPicker/GroupPicker.jsx'
+import { useGroupDashboard } from '../../hooks/useGroupDashboard.js'
 import winnerLaurel from '../../assets/winner-laurel.png'
 import greenLaurel from '../../assets/green-laurel.png'
 import styles from './TrophiesPage.module.css'
@@ -7,6 +10,10 @@ const podiumStyles = [styles.gold, styles.silver, styles.bronze]
 const podiumLabels = ['Campeão da arena', 'Vice-campeão', 'Terceiro lugar']
 
 function TrophiesPage() {
+  const [searchParams] = useSearchParams()
+  const demo = searchParams.get('demo') === '1'
+  const dashboard = useGroupDashboard()
+  const ranking = (demo ? demoRanking : dashboard.snapshot?.ranking || []).slice(0, 10)
   return (
     <section className={styles.page} aria-labelledby="ranking-title">
       <header className={styles.header}>
@@ -20,9 +27,11 @@ function TrophiesPage() {
         <p className={styles.description}>Cada vitória te deixa mais perto do topo.</p>
       </header>
 
+      {!demo && <GroupPicker dashboard={dashboard} />}
+
       <div className={styles.listHeading}>
         <h2>Top 10 jogadores</h2>
-        <span>Por vitórias</span>
+        <span>Por vitórias nos x1</span>
       </div>
       <ol className={styles.ranking} aria-label="Classificação dos jogadores">
         {ranking.map((player, index) => (
@@ -37,9 +46,9 @@ function TrophiesPage() {
               </div>
             )}
             <div className={styles.identity}>
-              {index < 3 && <span className={styles.podiumLabel}>{podiumLabels[index]}</span>}
+              {index < 3 && player.matches > 0 && <span className={styles.podiumLabel}>{podiumLabels[index]}</span>}
               <h3>{player.name}</h3>
-              <p>{player.matches} partidas <span aria-hidden="true">·</span> {Math.round(player.wins / player.matches * 100)}% de vitórias</p>
+              <p>{player.matches} partidas <span aria-hidden="true">·</span> {player.matches ? Math.round(player.wins / player.matches * 100) : 0}% de vitórias</p>
             </div>
             <div className={styles.wins}>
               <strong>{player.wins}</strong>
@@ -48,7 +57,8 @@ function TrophiesPage() {
           </li>
         ))}
       </ol>
-      <p className={styles.notice}>Prévia com jogadores e resultados fictícios.</p>
+      {!ranking.length && !dashboard.loading && <p className={styles.notice}>Cadastre um grupo para acompanhar o ranking dos x1.</p>}
+      <p className={styles.notice}>{demo ? <>Prévia com jogadores fictícios. <Link to="/trofeus">Voltar aos registros reais</Link></> : 'O total considera apenas partidas registradas entre os membros do grupo.'}</p>
     </section>
   )
 }
