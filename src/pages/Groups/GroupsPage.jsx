@@ -63,7 +63,7 @@ function GroupsPage() {
       {snapshot && <GroupManagement key={snapshot.group.id} snapshot={snapshot}
         canManage={manager} busy={busy || dashboard.loading}
         execute={execute} setMessage={setMessage} onDeleted={dashboard.forgetGroup} />}
-      <p className={styles.notice}>Consultas em lotes de até 8 jogadores por minuto enquanto o servidor local estiver ligado. O primeiro ciclo importa os amistosos recentes disponíveis; partidas antigas fora da API não podem ser recuperadas.</p>
+      <p className={styles.notice}>Com o grupo ativo, as partidas são consultadas automaticamente a cada 30 segundos enquanto alguém acompanha o grupo no aplicativo. Cada lote consulta até 8 jogadores. Partidas antigas fora da API não podem ser recuperadas.</p>
     </section>
   )
 }

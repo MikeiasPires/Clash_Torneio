@@ -12,7 +12,7 @@ const demoIndex = buildHeadToHeadIndex(demoMatches)
 function HistoryPage() {
   const [searchParams] = useSearchParams()
   const demo = searchParams.get('demo') === '1'
-  const dashboard = useGroupDashboard()
+  const dashboard = useGroupDashboard({ autoSync: !demo })
   const snapshot = dashboard.snapshot
   const matches = demo ? demoMatches : snapshot?.matches || []
   const index = useMemo(() => {

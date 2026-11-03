@@ -1,7 +1,7 @@
 import process from 'node:process'
 import { ApiError } from '../clashRoyale.mjs'
 import { assertGroupId, BATCH_SIZE, POLL_INTERVAL_MS } from './domain.mjs'
-import { errorResponse, isLocalOrganizer, jsonResponse, readJson, requireOrganizer, requireSecret } from './http.mjs'
+import { errorResponse, isLocalOrganizer, jsonResponse, readJson, requireOrganizer, requireSameOrigin, requireSecret } from './http.mjs'
 import { getGroupsService } from './service.mjs'
 import { getRequestAccount, parseSessionCookie } from '../accounts/security.mjs'
 import { createAccountsService } from '../accounts/service.mjs'
@@ -33,9 +33,16 @@ export function createGroupsHandler({ env = process.env, getService = () => getG
         }
         return jsonResponse(res, 200, body)
       }
-      requireOrganizer(req, env, account)
       const action = query.get('action') || 'create'
-      if (query.has('offset') || !['create', 'sync', 'toggle', 'add-members', 'remove-member', 'delete', 'invite', 'revoke-invite'].includes(action)) throw new ApiError(400, 'Ação inválida.')
+      if (action === 'poll') {
+        requireSameOrigin(req)
+        const local = !account && isLocalOrganizer(req, env)
+        if (!account && !local) throw new ApiError(401, 'Entre na sua conta para atualizar as partidas.')
+        if (!id) throw new ApiError(400, 'Informe o grupo que deseja atualizar.')
+        service ||= await getService()
+        if (!account?.isAdmin && !local && !await service.store.accountHasGroup(account.id, id)) throw new ApiError(403, 'Você não participa deste grupo.')
+      } else requireOrganizer(req, env, account)
+      if (query.has('offset') || !['create', 'sync', 'poll', 'toggle', 'add-members', 'remove-member', 'delete', 'invite', 'revoke-invite'].includes(action)) throw new ApiError(400, 'Ação inválida.')
       const body = await readJson(req)
       service ||= await getService()
       if (['invite', 'revoke-invite'].includes(action)) {
@@ -48,8 +55,9 @@ export function createGroupsHandler({ env = process.env, getService = () => getG
         if (id) throw new ApiError(400, 'Não informe um ID ao criar um grupo.')
         return jsonResponse(res, 201, { group: await service.createGroup(body) })
       }
-      if (action === 'sync') {
+      if (['sync', 'poll'].includes(action)) {
         if (Object.keys(body).length) throw new ApiError(400, 'Os resultados são consultados na API; não envie partidas pelo formulário.')
+        if (action === 'poll' && account) await createAccountsService(service).limit('poll:' + account.id, 120, 15)
         return jsonResponse(res, 200, await service.sync(id))
       }
       if (['add-members', 'remove-member', 'delete'].includes(action)) {

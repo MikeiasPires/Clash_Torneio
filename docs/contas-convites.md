@@ -70,12 +70,18 @@ Execute as migrações em ordem, aplicando somente as que ainda não foram execu
 2. `202611010002_group_management.sql`
 3. `202611010003_accounts_invites.sql`
 4. `202611010004_account_player_tag.sql`
+5. `202611030005_battle_collection_start.sql`
+6. `202611030006_poll_every_30_seconds.sql`
 
 A terceira migração acrescenta contas, sessões, convites, controle de tentativas e vínculos entre contas e membros. As tabelas têm RLS ativado e acesso direto revogado para `anon` e `authenticated`. As transações privadas são acessíveis somente pelo backend com `service_role`.
 
 A quarta migração permite vincular a tag sem convite, com a mesma exclusividade e proteção contra troca de tag usadas na entrada por convite. Aplique-a antes de publicar o backend atualizado no Supabase. No SQLite local, não é necessária uma migração adicional.
 
+A quinta migração permite definir um início global da contagem no Supabase. Sem configuração, continua importando todo o histórico disponível. Para começar em 03/11/2026 às 00h de Brasília, aplique a quinta migração e execute `supabase/operations/start-counting-20261103.sql` no SQL Editor. A operação remove de todos os grupos apenas as partidas anteriores ao corte e seus vínculos; preserva as partidas de hoje, contas, grupos, membros, sessões e convites. As próximas sincronizações ignoram partidas anteriores ao corte, impedindo a reimportação. A data fica fixa, sem descartar as partidas do campeonato na virada de cada dia. A configuração é somente do Supabase e não altera o SQLite local.
+
 Configure `X1_STORAGE=supabase`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `GROUPS_ADMIN_TOKEN`, `CRON_SECRET` e as variáveis da API do Clash. Nunca use prefixo `VITE_` para credenciais privadas. A configuração de IP e monitoramento segue o guia do registrador. Nenhuma conta de teste é criada no banco real pelos testes.
+
+A sexta migração reduz o intervalo compartilhado da coleta para 30 segundos. Aplique-a no SQL Editor antes de publicar a versão com atualização automática. Enquanto uma tela do grupo estiver visível, um membro conectado ou administrador solicita a coleta do grupo selecionado, sem precisar do botão de consulta. A sessão e a participação são validadas no backend; somente administradores continuam podendo gerenciar grupos. Abas ocultas pausam a coleta e retomam ao voltar. Sem o aplicativo aberto, a Vercel depende de um agendador externo. A migração não apaga partidas nem altera o corte da quinta migração.
 
 ## Verificações
 

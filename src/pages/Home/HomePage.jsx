@@ -29,7 +29,7 @@ function ChampionPortrait({ player }) {
 function HomePage() {
   const [searchParams] = useSearchParams()
   const demo = searchParams.get('demo') === '1'
-  const dashboard = useGroupDashboard()
+  const dashboard = useGroupDashboard({ autoSync: !demo })
   const { user } = useAuth()
   const ranking = demo ? demoRanking : dashboard.snapshot?.ranking || []
   const champion = ranking.find(player => player.matches > 0)

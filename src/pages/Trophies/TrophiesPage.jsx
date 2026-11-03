@@ -12,7 +12,7 @@ const podiumLabels = ['Campeão da arena', 'Vice-campeão', 'Terceiro lugar']
 function TrophiesPage() {
   const [searchParams] = useSearchParams()
   const demo = searchParams.get('demo') === '1'
-  const dashboard = useGroupDashboard()
+  const dashboard = useGroupDashboard({ autoSync: !demo })
   const ranking = (demo ? demoRanking : dashboard.snapshot?.ranking || []).slice(0, 10)
   return (
     <section className={styles.page} aria-labelledby="ranking-title">

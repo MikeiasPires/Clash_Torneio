@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { getGroup, listGroups } from '../services/groupsApi.js'
+import { startGroupPolling } from '../services/groupPolling.js'
+import { GROUP_POLL_INTERVAL_MS } from '../../shared/groupTiming.js'
 
 function initialGroup() {
   if (typeof window === 'undefined') return ''
@@ -7,14 +9,17 @@ function initialGroup() {
   catch { return '' }
 }
 
-export function useGroupDashboard() {
+export function useGroupDashboard({ autoSync = true } = {}) {
   const [groupId, setGroupId] = useState(initialGroup)
   const [offset, setOffset] = useState(0)
   const [version, setVersion] = useState(0)
   const [catalog, setCatalog] = useState(null)
   const [state, setState] = useState({ key: '', id: '', offset: 0, data: null, error: '' })
+  const [collection, setCollection] = useState({ id: '', error: '' })
   const refresh = useCallback(() => setVersion(value => value + 1), [])
   const key = `${groupId}:${offset}:${version}`
+  const selectedGroup = catalog?.groups.find(group => group.id === groupId)
+  const canPoll = Boolean(autoSync && selectedGroup?.enabled && selectedGroup.memberCount >= 2)
 
   const selectGroup = useCallback(id => {
     setGroupId(id)
@@ -46,9 +51,21 @@ export function useGroupDashboard() {
   }, [groupId, offset, key])
 
   useEffect(() => {
-    const timer = setInterval(refresh, 30_000)
+    if (canPoll) return
+    const timer = setInterval(refresh, GROUP_POLL_INTERVAL_MS)
     return () => clearInterval(timer)
-  }, [refresh])
+  }, [refresh, canPoll])
+
+  useEffect(() => {
+    if (!canPoll) return
+    return startGroupPolling({ groupId,
+      onResult(report) {
+        if (report.checkedPlayers) setCollection({ id: groupId, error: report.failures.length ? report.failures[0].error : '' })
+        refresh()
+      },
+      onError(error) { setCollection({ id: groupId, error: error.message }); refresh() },
+    })
+  }, [groupId, canPoll, refresh])
 
   return {
     forgetGroup(id) {
@@ -59,7 +76,7 @@ export function useGroupDashboard() {
     groups: catalog?.groups || [], localOrganizer: Boolean(catalog?.localOrganizer),
     groupId, selectGroup, snapshot: state.id === groupId && state.offset === offset ? state.data : null,
     loading: !catalog || Boolean(groupId && state.key !== key),
-    error: catalog?.error || (state.key === key ? state.error : ''), refresh, offset,
+    error: catalog?.error || (state.key === key ? state.error : '') || (canPoll && collection.id === groupId ? collection.error : ''), refresh, offset,
     nextPage: () => setOffset(value => value + 50), previousPage: () => setOffset(value => Math.max(0, value - 50)),
   }
 }

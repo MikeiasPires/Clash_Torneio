@@ -50,7 +50,9 @@ As tags cadastradas são referências a perfis públicos do jogo, sem comprovaç
 
 ## Como o monitor evita problemas
 
-Cada ciclo reserva até 8 jogadores, consultando no máximo 4 ao mesmo tempo. Jogadores em vários grupos são compartilhados na fila. Depois da tentativa, há um intervalo mínimo de 60 segundos por jogador.
+Cada ciclo reserva até 8 jogadores, consultando no máximo 4 ao mesmo tempo. Jogadores em vários grupos são compartilhados na fila. Depois da tentativa, há um intervalo mínimo de 30 segundos por jogador, compartilhado entre usuários, abas e instâncias do servidor. Aplique a migração `202611030006_poll_every_30_seconds.sql` no Supabase para usar esse intervalo em produção.
+
+As telas de Home, Grupos, Troféus e Histórico consultam automaticamente o Clash para o grupo selecionado a cada 30 segundos e recarregam os registros após a coleta. É necessário estar conectado como membro desse grupo ou administrador. Cada aba mantém no máximo uma coleta em andamento, pausa enquanto está oculta e retoma ao voltar. O endpoint aceita somente o ID do grupo e um corpo vazio; não permite enviar resultados nem gerenciar grupos. Falhas da coleta aparecem na tela, preservando os registros já salvos. Grupos pausados ou com menos de dois membros apenas atualizam a leitura do banco.
 
 A reserva fica no próprio banco e dura até 120 segundos. Se um processo cair, outro poderá retomar o trabalho. Um identificador de reserva impede que uma resposta antiga sobrescreva o estado de uma coleta nova. Gravações são transacionais; falhar no meio não deixa meia partida salva.
 
@@ -66,7 +68,7 @@ SQLite é usado apenas no computador. O backend recusa essa configuração na Ve
 
 Quando houver um projeto no Supabase:
 
-1. Execute os arquivos SQL de `supabase/migrations/` em ordem de nome, aplicando somente os que ainda não foram executados. A migração `202611010003_accounts_invites.sql` acrescenta contas, perfis e convites.
+1. Execute os arquivos SQL de `supabase/migrations/` em ordem de nome, aplicando somente os que ainda não foram executados. A migração `202611010003_accounts_invites.sql` acrescenta contas, perfis e convites; `202611030006_poll_every_30_seconds.sql` ajusta a coleta automática para 30 segundos.
 2. Configure no backend da Vercel:
 
 ```dotenv
@@ -93,7 +95,7 @@ Os registros existentes no SQLite não são enviados automaticamente ao Supabase
 
 `GET /api/monitor` executa um lote e exige `Authorization: Bearer <CRON_SECRET>`. A Vercel envia esse cabeçalho automaticamente quando `CRON_SECRET` está configurado e o endpoint é chamado por um Cron Job da plataforma.
 
-O projeto não ativa um cron diário por padrão, pois isso daria uma falsa impressão de monitoramento frequente. A Vercel Hobby permite cron somente uma vez por dia; Pro/Enterprise permitem uma vez por minuto. Para monitoramento frequente no Pro, acrescente ao `vercel.json`:
+Com uma tela do grupo aberta e visível, o navegador já dispara a coleta a cada 30 segundos, inclusive na Vercel Hobby. Não é necessário cron para esse fluxo. Para continuar coletando quando ninguém estiver no aplicativo, configure um agendador. O projeto não ativa um cron diário por padrão, pois isso daria uma falsa impressão de monitoramento frequente. A Vercel Hobby permite cron somente uma vez por dia; Pro/Enterprise permitem uma vez por minuto. Para monitoramento frequente no Pro, acrescente ao `vercel.json`:
 
 ```json
 "crons": [{ "path": "/api/monitor", "schedule": "* * * * *" }]
@@ -109,6 +111,7 @@ No Hobby, outra opção é um agendador externo que chame o endpoint a cada minu
 | `GET /api/groups?id=UUID&offset=0` | Grupo, membros, 50 partidas e placares de todo o histórico salvo | Membro ou administrador |
 | `POST /api/groups?action=create` | Criar grupo com `{ "name": "Amigui", "tags": ["#TAG1", "#TAG2"] }` | Organizador |
 | `POST /api/groups?action=sync&id=UUID` | Consultar um lote do grupo; corpo `{}` | Organizador |
+| `POST /api/groups?action=poll&id=UUID` | Coleta automática de um lote do grupo selecionado; corpo `{}` | Membro do grupo ou administrador |
 | `POST /api/groups?action=toggle&id=UUID` | Pausar/retomar com `{ "enabled": false }` | Organizador |
 | `POST /api/groups?action=add-members&id=UUID` | Adicionar com `{ "tags": ["#TAG"] }` ou lista de texto | Organizador |
 | `POST /api/groups?action=remove-member&id=UUID` | Retirar com `{ "tag": "#TAG" }` | Organizador |

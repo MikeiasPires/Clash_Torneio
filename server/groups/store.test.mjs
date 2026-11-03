@@ -42,6 +42,17 @@ async function pgStore() {
 }
 
 for (const [name, create] of [['SQLite', async () => createSqliteStore(':memory:')], ['PostgreSQL/Supabase', pgStore]]) {
+  test(`${name}: reserva compartilhada permite novo lote em 30 segundos, sem duplicar consultas entre abas`, async t => {
+    const store = await create()
+    t.after(() => store.close())
+    const groupId = randomUUID(), batchId = randomUUID()
+    await store.createGroup({ id: groupId, name: 'Coleta a cada 30s', players: players.slice(0, 2), now: start })
+    assert.equal((await store.claimPlayers({ groupId, limit: 8, now: start, batchId })).length, 2)
+    assert.equal((await store.claimPlayers({ groupId, limit: 8, now: start, batchId: randomUUID() })).length, 0)
+    for (const tag of [A, B]) await store.finishPlayer({ tag, batchId, matches: [], now: start })
+    assert.equal((await store.claimPlayers({ groupId, limit: 8, now: '2026-11-01T12:00:29.999Z', batchId: randomUUID() })).length, 0)
+    assert.equal((await store.claimPlayers({ groupId, limit: 8, now: '2026-11-01T12:00:30.000Z', batchId: randomUUID() })).length, 2)
+  })
   test(`${name}: grupos isolados, duplicidade, locks, paginação, rollback e placar acumulado`, async t => {
     const store = await create()
     t.after(() => store.close())
@@ -80,7 +91,7 @@ for (const [name, create] of [['SQLite', async () => createSqliteStore(':memory:
       await assert.rejects(store.db.query('select public.x1_list_groups()'), /permission denied/)
       await store.db.exec('reset role')
       const rls = await store.db.query("select count(*)::integer as n from pg_class where relname like 'x1_%' and relrowsecurity")
-      assert.equal(rls.rows[0].n, 10)
+      assert.equal(rls.rows[0].n, 11)
     }
   })
   test(`${name}: adiciona e retira membros, restaura histórico e exclui somente o grupo escolhido`, async t => {

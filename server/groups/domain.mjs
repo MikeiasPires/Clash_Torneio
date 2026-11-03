@@ -1,8 +1,9 @@
 import { parseGroupTags } from '../../shared/playerTag.js'
 import { ApiError } from '../clashRoyale.mjs'
+import { GROUP_POLL_INTERVAL_MS } from '../../shared/groupTiming.js'
 
 export const BATCH_SIZE = 8
-export const POLL_INTERVAL_MS = 60_000
+export const POLL_INTERVAL_MS = GROUP_POLL_INTERVAL_MS
 export const LEASE_MS = 120_000
 
 export function parseGroup(body) {

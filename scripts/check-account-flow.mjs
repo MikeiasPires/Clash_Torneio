@@ -58,7 +58,9 @@ try {
   assert.equal(second.status, 201)
   assert.equal((await call('/api/auth?action=link-player', { tag: B }, cookieOf(second))).status, 200)
   assert.equal((await call('/api/invites?action=join', { token, tag: B }, cookieOf(second))).status, 200)
-  assert.equal((await call('/api/groups?action=sync&id=' + id, {}, adminCookie)).status, 200)
+  const poll = await call('/api/groups?action=poll&id=' + id, {}, firstCookie)
+  assert.equal(poll.status, 200); assert.equal(poll.body.recordedMatches, 6)
+  assert.equal((await call('/api/groups?action=poll&id=' + id, {}, cookieOf(second))).body.checkedPlayers, 0)
   const snapshot = await call('/api/groups?id=' + id, undefined, firstCookie, 'GET')
   assert.equal(snapshot.status, 200); assert.equal(snapshot.body.totalMatches, 6)
   assert.equal(snapshot.body.ranking[0].name, 'Nome ' + A); assert.equal(snapshot.body.ranking[0].wins, 5)
@@ -74,5 +76,5 @@ try {
   assert.equal(metadata.format, 'jpeg'); assert.ok(metadata.width <= 384); assert.equal(metadata.exif, undefined)
   await call('/api/auth?action=logout', {}, firstCookie)
   assert.equal((await call('/api/auth?action=me', undefined, firstCookie, 'GET')).body.user, null)
-  console.log('HTTP completo aprovado: tag sem convite, grupo vazio, convite, cadastro com foto, dois membros, placar 5x1, privacidade e logout.')
+  console.log('HTTP completo aprovado: tag sem convite, grupo vazio, convite, cadastro com foto, coleta por membro com cooldown compartilhado, placar 5x1, privacidade e logout.')
 } finally { await new Promise(resolve => server.close(resolve)); store.close() }
