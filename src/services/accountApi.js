@@ -16,6 +16,7 @@ export const registerAccount = body => request('/api/auth?action=register', { bo
 export const loginAccount = body => request('/api/auth?action=login', { body })
 export const logoutAccount = () => request('/api/auth?action=logout', { body: {} })
 export const updateAccount = body => request('/api/auth?action=profile', { body })
+export const linkPlayer = tag => request('/api/auth?action=link-player', { body: { tag } })
 export const promoteAccount = token => request('/api/auth?action=promote', { body: {}, token })
 export const inspectInvite = (token, signal) => request('/api/invites?action=inspect', { body: { token }, signal })
 export const joinInvite = (token, tag) => request('/api/invites?action=join', { body: { token, tag } })

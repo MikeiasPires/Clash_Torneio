@@ -15,6 +15,10 @@ export function createSupabaseAccounts(client, call) {
   async function getAccount(id) { return account(await execute(client.from('x1_accounts').select(fields).eq('id', id).maybeSingle())) }
   return {
     getAccount,
+    async linkPlayer(id, player) {
+      await call('x1_link_player', { p_account_id: id, p_player: player })
+      return getAccount(id)
+    },
     async createAccount(data) { const id = await call('x1_create_account', { p_data: data }); return getAccount(id) },
     async getCredentials(email) {
       const row = await execute(client.from('x1_accounts').select('id,password_hash').eq('email', email).maybeSingle())

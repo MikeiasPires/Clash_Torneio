@@ -3,6 +3,35 @@ import { randomUUID } from 'node:crypto'
 import test from 'node:test'
 import { createPgTestDatabase } from '../testing/pglite.mjs'
 
+test('PostgreSQL: tag sem convite é única, imutável e não concede acesso a grupos', async t => {
+  const db = await createPgTestDatabase(); t.after(() => db.close())
+  const first = randomUUID(), second = randomUUID()
+  for (const id of [first, second]) await db.query('select public.x1_create_account($1)', [JSON.stringify({
+    id, email: id + '@example.test', passwordHash: 'hash-de-teste', name: 'Pessoa', age: 20, now: '2026-11-01T12:00:00Z',
+  })])
+  const link = (id, tag) => db.query('select public.x1_link_player($1,$2)', [id, JSON.stringify({ tag, name: 'Nome no jogo' })])
+  await db.exec('set role service_role')
+  await link(first, '#P0LY'); await link(first, '#P0LY')
+  await assert.rejects(link(second, '#P0LY'), /tag_taken/)
+  await assert.rejects(link(first, '#QY82'), /tag_changed/)
+  await assert.rejects(link(randomUUID(), '#QY82'), /account_missing/)
+  assert.equal((await db.query('select player_tag from public.x1_accounts where id=$1', [first])).rows[0].player_tag, '#P0LY')
+  assert.equal((await db.query('select player_tag from public.x1_accounts where id=$1', [second])).rows[0].player_tag, null)
+  assert.equal((await db.query('select count(*)::integer as n from public.x1_group_accounts')).rows[0].n, 0)
+  await db.exec('reset role')
+  const group = randomUUID()
+  await db.query('select public.x1_create_group($1,$2,$3,$4)', [group, 'Turma', '[]', '2026-11-01T12:00:00Z'])
+  await db.query('select public.x1_rotate_invite($1,$2,$3)', [group, 'convite', '2026-11-08T12:00:00Z'])
+  const join = id => db.query('select public.x1_join_invite($1,$2,$3,$4)', ['convite', id, JSON.stringify({ tag: '#P0LY', name: 'Nome no jogo' }), '2026-11-01T12:00:00Z'])
+  await assert.rejects(join(second), /tag_taken/)
+  await join(first)
+  for (const role of ['anon', 'authenticated']) {
+    await db.exec('set role ' + role)
+    await assert.rejects(link(second, '#QY82'), /permission denied/)
+    await db.exec('reset role')
+  }
+})
+
 test('PostgreSQL: convite entra atomicamente, respeita tag única, privacidade, capacidade e revogação', async t => {
   const db = await createPgTestDatabase(); t.after(() => db.close())
   const now = '2026-11-01T12:00:00.000Z', expires = '2026-11-08T12:00:00.000Z'

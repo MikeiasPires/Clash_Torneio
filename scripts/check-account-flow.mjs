@@ -38,6 +38,10 @@ try {
   const owner = await call('/api/auth?action=register', { name: 'Organizador de teste', age: 30, email: 'owner-http@example.test', password })
   assert.equal(owner.status, 201); assert.equal(owner.body.user.isAdmin, true)
   const adminCookie = cookieOf(owner)
+  const linked = await call('/api/auth?action=link-player', { tag: '#GG88' }, adminCookie)
+  assert.equal(linked.status, 200); assert.equal(linked.body.user.playerTag, '#GG88')
+  assert.equal((await call('/api/auth?action=me', undefined, adminCookie, 'GET')).body.user.playerTag, '#GG88')
+  assert.deepEqual(await store.listGroups(), [])
   const group = await call('/api/groups?action=create', { name: 'Grupo por convites', tags: [] }, adminCookie)
   assert.equal(group.status, 201)
   const id = group.body.group.id
@@ -52,6 +56,7 @@ try {
   assert.equal((await call('/api/invites?action=join', { token, tag: A }, firstCookie)).status, 200)
   const second = await call('/api/auth?action=register', { name: 'Bruno', age: 23, email: 'bruno-http@example.test', password, invite: token })
   assert.equal(second.status, 201)
+  assert.equal((await call('/api/auth?action=link-player', { tag: B }, cookieOf(second))).status, 200)
   assert.equal((await call('/api/invites?action=join', { token, tag: B }, cookieOf(second))).status, 200)
   assert.equal((await call('/api/groups?action=sync&id=' + id, {}, adminCookie)).status, 200)
   const snapshot = await call('/api/groups?id=' + id, undefined, firstCookie, 'GET')
@@ -69,5 +74,5 @@ try {
   assert.equal(metadata.format, 'jpeg'); assert.ok(metadata.width <= 384); assert.equal(metadata.exif, undefined)
   await call('/api/auth?action=logout', {}, firstCookie)
   assert.equal((await call('/api/auth?action=me', undefined, firstCookie, 'GET')).body.user, null)
-  console.log('HTTP completo aprovado: grupo vazio, convite, cadastro com foto, dois membros, placar 5x1, privacidade e logout.')
+  console.log('HTTP completo aprovado: tag sem convite, grupo vazio, convite, cadastro com foto, dois membros, placar 5x1, privacidade e logout.')
 } finally { await new Promise(resolve => server.close(resolve)); store.close() }

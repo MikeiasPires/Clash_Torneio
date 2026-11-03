@@ -20,7 +20,7 @@ function LoginPage() {
     try {
       const data = await loginAccount({ email: form.get('email'), password: form.get('password') })
       auth.acceptUser(data.user)
-      navigate(invite.token ? '/entrar-grupo' + invite.suffix : '/home', { replace: true })
+      navigate(invite.token ? '/entrar-grupo' + invite.suffix : data.user.playerTag ? '/home' : '/cadastro/tag', { replace: true })
     } catch (error) { setMessage(error.message) }
     finally { setBusy(false) }
   }

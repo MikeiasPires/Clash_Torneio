@@ -1,5 +1,14 @@
 # Contas, convites e perfil
 
+## Cadastro em duas etapas
+
+1. Em `/cadastro`, informe nome, idade, e-mail, senha e foto opcional.
+2. Ao criar a conta, a sessão é aberta e a página `/cadastro/tag` pede o código do jogador. No Clash Royale, abra seu perfil e copie a tag que começa com `#`.
+3. Sem convite, **Confirmar tag e finalizar** consulta o jogador na API, salva a tag e o nick na própria conta e abre `/perfil`. Vincular a tag não concede acesso a grupos.
+4. Com convite, a mesma segunda etapa mantém o convite no fragmento da URL e confirma a tag junto com a entrada no grupo, abrindo o histórico após o sucesso.
+
+Se a tag for inválida, não existir ou já estiver vinculada a outra conta, a tela permite corrigir e tentar novamente. A conta criada permanece disponível. Recarregar a segunda etapa mantém a sessão; fazer login em uma conta sem tag retoma essa etapa. A vinculação exige a API do Clash configurada no servidor.
+
 ## Fluxo do administrador
 
 1. Abra `/cadastro` sem convite e crie sua conta com nome, idade, e-mail, senha e, se quiser, foto.
@@ -60,8 +69,11 @@ Execute as migrações em ordem, aplicando somente as que ainda não foram execu
 1. `202611010001_x1_groups.sql`
 2. `202611010002_group_management.sql`
 3. `202611010003_accounts_invites.sql`
+4. `202611010004_account_player_tag.sql`
 
 A terceira migração acrescenta contas, sessões, convites, controle de tentativas e vínculos entre contas e membros. As tabelas têm RLS ativado e acesso direto revogado para `anon` e `authenticated`. As transações privadas são acessíveis somente pelo backend com `service_role`.
+
+A quarta migração permite vincular a tag sem convite, com a mesma exclusividade e proteção contra troca de tag usadas na entrada por convite. Aplique-a antes de publicar o backend atualizado no Supabase. No SQLite local, não é necessária uma migração adicional.
 
 Configure `X1_STORAGE=supabase`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `GROUPS_ADMIN_TOKEN`, `CRON_SECRET` e as variáveis da API do Clash. Nunca use prefixo `VITE_` para credenciais privadas. A configuração de IP e monitoramento segue o guia do registrador. Nenhuma conta de teste é criada no banco real pelos testes.
 

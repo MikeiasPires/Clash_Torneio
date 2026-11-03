@@ -42,6 +42,16 @@ export function createSqliteAccounts(db, transaction, linkKnownBattles) {
       return row ? { ...row } : null
     },
     async getAccount(id) { return account(id) },
+    async linkPlayer(id, player) {
+      return transaction(() => {
+        const user = account(id)
+        if (!user) throw new ApiError(401, 'Entre na sua conta para continuar.')
+        if (user.playerTag && user.playerTag !== player.tag) throw new ApiError(409, 'Esta conta já está vinculada a outra tag.')
+        if (db.prepare('SELECT 1 FROM x1_accounts WHERE player_tag=? AND id<>?').get(player.tag, id)) throw new ApiError(409, 'Esta tag já está vinculada a outra conta do aplicativo.')
+        db.prepare('UPDATE x1_accounts SET player_tag=?,player_name=? WHERE id=?').run(player.tag, player.name, id)
+        return account(id)
+      })
+    },
     async updateAccount(id, { name, age, phrase, photo, photoVersion }) {
       db.prepare(`UPDATE x1_accounts SET display_name=?,age=?,phrase=?,photo=coalesce(?,photo),photo_version=coalesce(?,photo_version) WHERE id=?`)
         .run(name, age, phrase, photo, photoVersion, id)

@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import { randomUUID } from 'node:crypto'
 import test from 'node:test'
 import sharp from 'sharp'
+import { ApiError } from '../clashRoyale.mjs'
 import { createSqliteStore } from '../store/sqliteStore.mjs'
 import { createGroupsService } from '../groups/service.mjs'
 import { createGroupsHandler } from '../groups/handler.mjs'
@@ -11,7 +12,7 @@ import { hashPassword, hashToken, sessionCookie, verifyPassword } from './securi
 import { processPhoto } from './photo.mjs'
 
 const A = '#P0LY', B = '#QY82', C = '#GG88'
-const password = 'uma senha longa para os amigui'
+const password = 'Senha12345'
 const secret = 'o'.repeat(64)
 const request = (action, body = {}, cookie = '', method = 'POST') => ({ method, url: '/api/' + action, body,
   headers: { host: '127.0.0.1:5174', origin: 'http://127.0.0.1:5174', 'content-type': 'application/json', cookie }, socket: { remoteAddress: '127.0.0.1' } })
@@ -20,6 +21,59 @@ async function call(handler, action, body, cookie, method) {
   const result = response(); await handler(request(action, body, cookie, method), result); return result
 }
 const cookieOf = result => result.headers['Set-Cookie'].split(';')[0]
+
+test('cadastro sem convite vincula jogador, persiste a tag e protege conta e grupos', async t => {
+  const store = createSqliteStore(':memory:'); t.after(() => store.close())
+  const lookedUp = []
+  const service = createGroupsService({ store, clash: { getPlayer: async tag => {
+    lookedUp.push(tag)
+    if (tag === C) throw new ApiError(404, 'Jogador não encontrado.')
+    return { tag, name: 'Nome no jogo' }
+  } } })
+  const handler = createAuthHandler({ env: {}, getService: async () => service })
+  const account = await call(handler, 'auth?action=register', { name: 'Pessoa', age: 20, email: 'tag@example.test', password })
+  assert.equal(account.statusCode, 201); assert.equal(account.body.user.playerTag, null)
+  const cookie = cookieOf(account)
+  const link = (body, session = cookie) => call(handler, 'auth?action=link-player', body, session)
+  assert.equal((await link({ tag: A }, '')).statusCode, 401)
+  assert.equal((await link({ tag: A, id: randomUUID() })).statusCode, 400)
+  assert.equal((await link({ tag: A, isAdmin: true })).statusCode, 400)
+  assert.equal((await link({ tag: '<script>' })).statusCode, 400)
+  assert.deepEqual(lookedUp, [])
+  assert.equal((await link({ tag: C })).statusCode, 404)
+  assert.equal((await store.getAccount(account.body.user.id)).playerTag, null)
+  const linked = await link({ tag: ' poly ' })
+  assert.equal(linked.statusCode, 200); assert.equal(linked.body.user.playerTag, A)
+  assert.equal(linked.body.user.playerName, 'Nome no jogo')
+  assert.equal(linked.body.user.name, 'Pessoa'); assert.ok(!JSON.stringify(linked.body).includes('password'))
+  assert.equal((await link({ tag: A })).statusCode, 200)
+  assert.equal((await link({ tag: B })).statusCode, 409)
+  const other = await call(handler, 'auth?action=register', { name: 'Outra pessoa', age: 25, email: 'tag-other@example.test', password })
+  assert.equal((await link({ tag: A }, cookieOf(other))).statusCode, 409)
+  assert.equal((await store.getAccount(other.body.user.id)).playerTag, null)
+  const crossSite = request('auth?action=link-player', { tag: B }, cookie)
+  crossSite.headers.origin = 'https://attacker.example'
+  const denied = response(); await handler(crossSite, denied)
+  assert.equal(denied.statusCode, 403)
+  const session = await call(handler, 'auth?action=me', {}, cookie, 'GET')
+  assert.equal(session.body.user.playerTag, A)
+  const login = await call(handler, 'auth?action=login', { email: 'tag@example.test', password })
+  assert.equal(login.body.user.playerTag, A)
+  assert.deepEqual(await store.listAccountGroupIds(account.body.user.id), [])
+  assert.deepEqual(await store.listGroups(), [])
+})
+
+test('vinculação concorrente revalida a tag no banco e limita consultas por conta', async t => {
+  const store = createSqliteStore(':memory:'); t.after(() => store.close())
+  const auth = createAccountsService({ store, clash: { getPlayer: async tag => ({ tag, name: 'Jogador' }) } })
+  const user = await auth.register({ name: 'Pessoa', age: 20, email: 'race@example.test', password })
+  const results = await Promise.allSettled([auth.linkPlayer(user, { tag: A }), auth.linkPlayer(user, { tag: B })])
+  assert.equal(results.filter(result => result.status === 'fulfilled').length, 1)
+  assert.equal(results.find(result => result.status === 'rejected').reason.status, 409)
+  const linked = await store.getAccount(user.id)
+  for (let i = 0; i < 13; i++) await auth.linkPlayer(linked, { tag: linked.playerTag })
+  await assert.rejects(auth.linkPlayer(linked, { tag: linked.playerTag }), { status: 429 })
+})
 
 test('cadastro, convite, tag, foto, permissões, perfil, login e logout funcionam juntos', async t => {
   const store = createSqliteStore(':memory:'); t.after(() => store.close())
@@ -119,6 +173,9 @@ test('fotos inválidas, SVG disfarçado e campos sensíveis forjados são rejeit
   const store = createSqliteStore(':memory:')
   try {
     const auth = createAccountsService({ store, clash: {} })
+    for (const invalidPassword of ['123456789', 'a'.repeat(129)]) {
+      await assert.rejects(auth.register({ name: 'Nome', age: 20, email: 'test@example.test', password: invalidPassword }), { status: 400 })
+    }
     await assert.rejects(auth.register({ name: 'Nome', age: 20, email: 'test@example.test', password, isAdmin: true }), { status: 400 })
     await assert.rejects(auth.register({ name: 'Nome', age: 0, email: 'test@example.test', password }), { status: 400 })
   } finally { store.close() }

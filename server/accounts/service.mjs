@@ -40,7 +40,7 @@ export function createAccountsService({ store, clash, clock = () => new Date().t
     async register(body, localBootstrap = false) {
       checkFields(body, ['name', 'age', 'email', 'password', 'photo', 'invite'])
       const email = emailField(body.email)
-      if (typeof body.password !== 'string' || body.password.length < 15 || body.password.length > 128) throw new ApiError(400, 'Use uma senha de 15 a 128 caracteres.')
+      if (typeof body.password !== 'string' || body.password.length < 10 || body.password.length > 128) throw new ApiError(400, 'Use uma senha de 10 a 128 caracteres.')
       const profile = profileFields(body)
       if (body.invite) await inspect(body.invite)
       await limit('register:' + email, 5, 60)
@@ -67,6 +67,15 @@ export function createAccountsService({ store, clash, clock = () => new Date().t
     async updateProfile(user, body) {
       checkFields(body, ['name', 'age', 'phrase', 'photo'])
       return store.updateAccount(user.id, { ...profileFields(body), ...await processPhoto(body.photo) })
+    },
+    async linkPlayer(user, body) {
+      checkFields(body, ['tag'])
+      await limit('link-player:' + user.id, 15, 15)
+      let tag
+      try { tag = normalizePlayerTag(body.tag) } catch (error) { throw new ApiError(400, error.message) }
+      if (user.playerTag && user.playerTag !== tag) throw new ApiError(409, 'Esta conta já está vinculada a outra tag.')
+      const player = await clash.getPlayer(tag)
+      return store.linkPlayer(user.id, { tag: player.tag, name: player.name })
     },
     async createInvite(groupId) {
       const token = randomToken()

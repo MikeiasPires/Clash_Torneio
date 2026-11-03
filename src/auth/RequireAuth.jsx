@@ -4,7 +4,7 @@ function RequireAuth() {
   const { user, loading } = useAuth()
   const location = useLocation()
   if (loading) return <p className="session-loading" role="status">Carregando sua conta…</p>
-  if (!user) return <Navigate to={'/login' + (location.pathname === '/entrar-grupo' ? location.hash : '')} replace />
+  if (!user) return <Navigate to={'/login' + (['/entrar-grupo', '/cadastro/tag'].includes(location.pathname) ? location.hash : '')} replace />
   return <Outlet />
 }
 export default RequireAuth

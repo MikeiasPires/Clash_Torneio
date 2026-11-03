@@ -25,6 +25,7 @@ function AppRoutes() {
         <Route path="/grupos" element={<GroupsPage />} />
       </Route>
       <Route path="/entrar-grupo" element={<JoinGroupPage />} />
+      <Route path="/cadastro/tag" element={<JoinGroupPage registration />} />
       </Route>
       <Route path="/convite" element={<InvitePage />} />
       <Route path="/login" element={<LoginPage />} />

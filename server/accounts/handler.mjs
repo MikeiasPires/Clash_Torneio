@@ -20,7 +20,7 @@ export function createAuthHandler({ env = process.env, getService = () => getGro
       if (req.method === 'GET' && action === 'me') return jsonResponse(res, 200, { user: publicAccount(user) })
       if (req.method !== 'POST') throw new ApiError(405, 'Método não permitido.')
       requireSameOrigin(req)
-      if (!['register', 'login', 'logout', 'profile', 'promote'].includes(action)) throw new ApiError(400, 'Ação inválida.')
+      if (!['register', 'login', 'logout', 'profile', 'promote', 'link-player'].includes(action)) throw new ApiError(400, 'Ação inválida.')
       await auth.limit(`auth:${req.socket?.remoteAddress || 'server'}`, 120, 15)
       const body = await readJson(req, ['register', 'profile'].includes(action) ? 3_000_000 : 8192)
       if (['register', 'login'].includes(action)) {
@@ -38,6 +38,7 @@ export function createAuthHandler({ env = process.env, getService = () => getGro
         return jsonResponse(res, 200, { user: null })
       }
       requireAccount(user)
+      if (action === 'link-player') return jsonResponse(res, 200, { user: publicAccount(await auth.linkPlayer(user, body)) })
       if (action === 'promote') {
         if (Object.keys(body).length) throw new ApiError(400, 'Não envie dados de outra conta.')
         requireSecret(req, env.GROUPS_ADMIN_TOKEN)
