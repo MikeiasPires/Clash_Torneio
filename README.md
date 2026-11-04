@@ -6,4 +6,6 @@ O administrador pode gerar um convite do grupo. A pessoa cria a conta com nome, 
 
 No histórico, clique no cartão da partida para abrir os decks dos dois jogadores, com imagens e custo individual de elixir. O modal acompanha o estilo da arena e funciona por teclado, com fechamento por Escape ou clique fora.
 
+As imagens das cartas são servidas por `/api/card-image`, no próprio domínio do aplicativo. O backend consulta somente caminhos PNG do CDN oficial, valida e converte o arquivo para WebP e mantém cache por 24 horas. O navegador não precisa acessar o CDN externo. Essa rota não exige novas variáveis nem migrações do banco.
+
 Para habilitar o salvamento das cartas no Supabase, aplique também `supabase/migrations/202611040007_battle_decks.sql`, após as migrações anteriores. No SQLite, as colunas são adicionadas automaticamente ao iniciar o aplicativo. Registros antigos são completados quando a partida reaparece na coleta; sem dados disponíveis, o modal informa que as cartas não foram registradas. Custos ausentes aparecem como `?`.

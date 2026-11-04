@@ -8,6 +8,18 @@ export function cardImageUrl(value) {
   } catch { return null }
 }
 
+export function battleCardImageSrc(value) {
+  const url = cardImageUrl(value)
+  if (!url) return null
+  const path = new URL(url).pathname
+  return isCardImagePath(path) ? `/api/card-image?path=${encodeURIComponent(path)}` : null
+}
+
+export function isCardImagePath(value) {
+  return typeof value === 'string' && value.length <= 200
+    && /^\/cards\/[a-zA-Z0-9_-]+\/[a-zA-Z0-9_-]+\.png$/.test(value)
+}
+
 // Aceita tanto as cartas da API quanto as já salvas, sem expor campos extras.
 export function normalizeBattleCards(cards) {
   if (!Array.isArray(cards)) return []

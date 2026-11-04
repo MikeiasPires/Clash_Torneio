@@ -1,13 +1,14 @@
 import { useState } from 'react'
-import { normalizeBattleCards } from '../../../shared/battleCards.js'
+import { battleCardImageSrc, normalizeBattleCards } from '../../../shared/battleCards.js'
 import styles from './MatchDetailsModal.module.css'
 
 function BattleCard({ card }) {
   const [failed, setFailed] = useState(false)
+  const imageSrc = battleCardImageSrc(card.imageUrl)
   return <li className={styles.card}>
     <div className={styles.cardArt}>
-      {card.imageUrl && !failed
-        ? <img src={card.imageUrl} alt={card.name} width="120" height="144" loading="lazy" referrerPolicy="no-referrer" onError={() => setFailed(true)} />
+      {imageSrc && !failed
+        ? <img src={imageSrc} alt={card.name} width="120" height="144" loading="lazy" onError={() => setFailed(true)} />
         : <span className={styles.missingArt} role="img" aria-label={`Imagem indisponível: ${card.name}`}>?</span>}
       <span className={styles.elixir} aria-label={card.elixirCost === null ? 'Custo de elixir não informado' : `${card.elixirCost} de elixir`}>
         {card.elixirCost ?? '?'}
@@ -24,7 +25,7 @@ function BattleDeck({ player, side, own }) {
       <div><p>{own ? 'SEU DECK' : 'DECK NA BATALHA'}</p><h3>{player.name}</h3></div>
       <span className={styles.crowns}>{player.crowns} <span>coroas</span></span>
     </header>
-    {cards.length ? <ul className={styles.cards}>{cards.map(card => <BattleCard key={card.id} card={card} />)}</ul>
+    {cards.length ? <ul className={styles.cards}>{cards.map(card => <BattleCard key={`${card.id}:${card.imageUrl}`} card={card} />)}</ul>
       : <p className={styles.emptyDeck}>As cartas não foram registradas nesta partida.</p>}
   </section>
 }

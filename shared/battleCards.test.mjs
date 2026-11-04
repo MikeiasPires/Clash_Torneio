@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { cardImageUrl, normalizeBattleCards } from './battleCards.js'
+import { battleCardImageSrc, cardImageUrl, normalizeBattleCards } from './battleCards.js'
 
 test('imagens aceitam apenas HTTPS no CDN das cartas, sem credenciais ou portas extras', () => {
   const url = 'https://api-assets.clashroyale.com/cards/300/knight.png'
@@ -10,6 +10,7 @@ test('imagens aceitam apenas HTTPS no CDN das cartas, sem credenciais ou portas 
     'https://api-assets.clashroyale.com@evil.test/cards/a.png', 'https://user:pass@api-assets.clashroyale.com/cards/a.png',
     'https://api-assets.clashroyale.com:8080/cards/a.png', 'https://api-assets.clashroyale.com/other/a.png']) {
     assert.equal(cardImageUrl(value), null)
+    assert.equal(battleCardImageSrc(value), null)
   }
 })
 
