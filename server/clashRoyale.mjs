@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto'
 import process from 'node:process'
 import { normalizePlayerTag } from '../shared/playerTag.js'
+import { normalizeBattleCards } from '../shared/battleCards.js'
 
 export class ApiError extends Error {
   constructor(status, message) {
@@ -28,7 +29,8 @@ function battlePlayer(player) {
   if (!player || !Number.isInteger(player.crowns) || player.crowns < 0 || player.crowns > 3) return null
   try {
     const tag = normalizePlayerTag(player.tag)
-    return { id: tag, name: typeof player.name === 'string' ? player.name.slice(0, 100) : tag, crowns: player.crowns }
+    return { id: tag, name: typeof player.name === 'string' ? player.name.slice(0, 100) : tag,
+      crowns: player.crowns, cards: normalizeBattleCards(player.cards) }
   } catch {
     return null
   }

@@ -1,8 +1,10 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import GroupPicker from '../../components/GroupPicker/GroupPicker.jsx'
 import { useGroupDashboard } from '../../hooks/useGroupDashboard.js'
 import MatchCard from './MatchCard.jsx'
+import MatchDetailsModal from './MatchDetailsModal.jsx'
+import { useAuth } from '../../auth/useAuth.js'
 import { matches as demoMatches } from './matches.js'
 import { buildHeadToHeadIndex } from './headToHead.js'
 import styles from './HistoryPage.module.css'
@@ -10,11 +12,14 @@ import styles from './HistoryPage.module.css'
 const demoIndex = buildHeadToHeadIndex(demoMatches)
 
 function HistoryPage() {
+  const { user } = useAuth()
+  const [selected, setSelected] = useState(null)
   const [searchParams] = useSearchParams()
   const demo = searchParams.get('demo') === '1'
   const dashboard = useGroupDashboard({ autoSync: !demo })
   const snapshot = dashboard.snapshot
   const matches = demo ? demoMatches : snapshot?.matches || []
+  const selectionKey = `${demo}:${dashboard.groupId}:${dashboard.offset}`
   const index = useMemo(() => {
     if (demo) return demoIndex
     const result = new Map()
@@ -46,7 +51,8 @@ function HistoryPage() {
       {matches.length ? (
         <ol className={styles.matches} aria-label="Partidas da mais recente para a mais antiga">
           {matches.map(match => <MatchCard key={match.id} match={match}
-            headToHead={index.get(match.left.id).get(match.right.id)}
+            onViewDetails={() => setSelected({ match, key: selectionKey })}
+            headToHead={index.get(match.left.id)?.get(match.right.id)}
             headToHeadNote={demo ? 'Contagem fictícia para demonstração.' : undefined} />)}
         </ol>
       ) : !dashboard.loading && (
@@ -58,6 +64,7 @@ function HistoryPage() {
         <button type="button" onClick={dashboard.nextPage} disabled={dashboard.offset + matches.length >= snapshot.totalMatches || dashboard.loading}>Mais antigas</button>
       </div>}
       <p className={styles.notice}>{demo ? <>Dados fictícios: Mestre do Deck 5 × 1 Rei da Arena. <Link to="/historico">Voltar aos registros reais</Link></> : <>Retrospecto acumulado de todas as partidas salvas neste grupo. <Link to="/historico?demo=1">Ver demonstração</Link></>}</p>
+      {selected?.key === selectionKey && <MatchDetailsModal match={selected.match} playerTag={user?.playerTag} onDismiss={() => setSelected(null)} />}
     </section>
   )
 }

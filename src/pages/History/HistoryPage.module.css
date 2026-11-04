@@ -39,6 +39,12 @@
   background: linear-gradient(90deg, transparent, #cae7ff, transparent);
   pointer-events: none;
 }
+.matchSummary { position: relative; }
+.detailsButton { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 44px; padding: 10px 16px; border: 0; border-top: 1px solid #6483a02e; background: #163756; color: #ffdc80; font: inherit; font-size: 11px; font-weight: 800; cursor: pointer; }
+.detailsButton::after { content: ''; position: absolute; inset: 0; border-radius: 16px 16px 0 0; }
+.detailsButton:hover { background: #21496e; }
+.detailsButton:focus-visible { outline: none; }
+.detailsButton:focus-visible::after { outline: 3px solid #ffdc80; outline-offset: -4px; }
 .matchHeading {
   display: flex;
   align-items: center;

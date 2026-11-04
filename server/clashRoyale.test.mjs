@@ -46,6 +46,20 @@ test('a mesma partida tem ID estável ao inverter os lados e não duplica o plac
   assert.deepEqual(stats.get(tag).get(otherTag), { wins: 1, losses: 0, draws: 0, total: 1 })
 })
 
+test('preserva os decks dos dois lados e descarta imagens externas e campos desnecessários', () => {
+  const card = { id: 26000000, name: 'Knight', elixirCost: 3,
+    iconUrls: { medium: 'https://api-assets.clashroyale.com/cards/300/knight.png' }, secret: 'omit' }
+  const source = { ...battle, team: [{ ...player, cards: [card] }],
+    opponent: [{ ...opponent, cards: [{ ...card, id: 26000001, name: 'Archers', iconUrls: { medium: 'https://tracker.example/card.png' } }] }] }
+  const [match] = normalizeFriendlyBattles([source], tag)
+  assert.deepEqual(match.left.cards, [{ id: card.id, name: card.name, elixirCost: 3, imageUrl: card.iconUrls.medium }])
+  assert.equal(match.right.cards[0].imageUrl, null)
+  const [reversed] = normalizeFriendlyBattles([source], otherTag)
+  assert.deepEqual(reversed.right.cards, match.left.cards)
+  assert.deepEqual(reversed.left.cards, match.right.cards)
+  assert.equal(reversed.id, match.id)
+})
+
 test('consulta apenas a URL oficial, codifica # e envia o token somente no cabeçalho', async () => {
   const client = createClashClient({ env, fetchImpl: async (url, options) => {
     assert.equal(url, 'https://api.clashroyale.com/v1/players/%23P0LY/battlelog')

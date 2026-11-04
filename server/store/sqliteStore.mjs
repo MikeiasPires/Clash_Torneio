@@ -4,6 +4,7 @@ import { DatabaseSync } from 'node:sqlite'
 import { ApiError } from '../clashRoyale.mjs'
 import { canonicalMatch, groupSnapshot, LEASE_MS, POLL_INTERVAL_MS, storedMatch } from '../groups/domain.mjs'
 import { createSqliteAccounts } from '../accounts/sqliteAccounts.mjs'
+import { normalizeBattleCards } from '../../shared/battleCards.js'
 
 const schema = `
   PRAGMA foreign_keys = ON;
@@ -57,6 +58,10 @@ export function createSqliteStore(filename) {
   if (filename !== ':memory:') fs.mkdirSync(path.dirname(path.resolve(filename)), { recursive: true })
   const db = new DatabaseSync(filename)
   db.exec(schema)
+  const columns = new Set(db.prepare('PRAGMA table_info(x1_battles)').all().map(column => column.name))
+  for (const column of ['left_cards', 'right_cards']) {
+    if (!columns.has(column)) db.exec(`ALTER TABLE x1_battles ADD COLUMN ${column} TEXT NOT NULL DEFAULT '[]' CHECK(json_valid(${column}) AND json_type(${column})='array' AND json_array_length(${column})<=8)`)
+  }
   function transaction(action) {
     db.exec('BEGIN IMMEDIATE')
     try { const result = action(); db.exec('COMMIT'); return result }
@@ -158,8 +163,12 @@ export function createSqliteStore(filename) {
           const groups = db.prepare(`SELECT l.group_id FROM x1_members l JOIN x1_members r ON r.group_id=l.group_id
             WHERE l.tag=? AND r.tag=?`).all(match.left.id, match.right.id)
           if (!groups.length) continue
-          db.prepare(`INSERT OR IGNORE INTO x1_battles VALUES(?,?,?,?,?,?,?,?)`).run(
-            match.id, match.playedAt, match.left.id, match.right.id, match.left.name, match.right.name, match.left.crowns, match.right.crowns)
+          db.prepare(`INSERT INTO x1_battles(id,played_at,left_tag,right_tag,left_name,right_name,left_crowns,right_crowns,left_cards,right_cards)
+            VALUES(?,?,?,?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET
+            left_cards=CASE WHEN x1_battles.left_cards='[]' THEN excluded.left_cards ELSE x1_battles.left_cards END,
+            right_cards=CASE WHEN x1_battles.right_cards='[]' THEN excluded.right_cards ELSE x1_battles.right_cards END`).run(
+            match.id, match.playedAt, match.left.id, match.right.id, match.left.name, match.right.name, match.left.crowns, match.right.crowns,
+            JSON.stringify(normalizeBattleCards(match.left.cards)), JSON.stringify(normalizeBattleCards(match.right.cards)))
           for (const group of groups) recorded += db.prepare('INSERT OR IGNORE INTO x1_group_battles VALUES(?,?)').run(group.group_id, match.id).changes
         }
         db.prepare(`UPDATE x1_players SET last_success_at=CASE WHEN ? IS NULL THEN ? ELSE last_success_at END,

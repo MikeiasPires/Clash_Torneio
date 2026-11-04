@@ -41,13 +41,14 @@ function PlayerResult({ player, winner, draw, side }) {
   )
 }
 
-function MatchCard({ match, headToHead, headToHeadNote }) {
+function MatchCard({ match, headToHead, headToHeadNote, onViewDetails }) {
   const { left, right, playedAt } = match
   const draw = left.crowns === right.crowns
   const winner = draw ? null : left.crowns > right.crowns ? left : right
 
   return (
     <li className={`${styles.matchCard} ${draw ? styles.drawCard : ''}`}>
+      <div className={styles.matchSummary}>
       <div className={styles.matchHeading}>
         <span className={styles.mode}>DUELO AMISTOSO <span>1 × 1</span></span>
         <time dateTime={playedAt}>{dateFormatter.format(new Date(playedAt))}</time>
@@ -76,7 +77,12 @@ function MatchCard({ match, headToHead, headToHeadNote }) {
           {draw ? 'Essa merece uma revanche.' : <><Crown className={styles.badgeCrown} />{winner.name}</>}
         </span>
       </div>
-      <HeadToHead left={left} right={right} stats={headToHead} note={headToHeadNote} />
+      <button type="button" className={styles.detailsButton} aria-haspopup="dialog"
+        aria-label={`Ver cartas da batalha: ${left.name} contra ${right.name}`} onClick={onViewDetails}>
+        Ver cartas da batalha <span aria-hidden="true">→</span>
+      </button>
+      </div>
+      {headToHead && <HeadToHead left={left} right={right} stats={headToHead} note={headToHeadNote} />}
     </li>
   )
 }

@@ -42,6 +42,31 @@ async function pgStore() {
 }
 
 for (const [name, create] of [['SQLite', async () => createSqliteStore(':memory:')], ['PostgreSQL/Supabase', pgStore]]) {
+  test(`${name}: completa decks antigos sem duplicar placares e mantém as cartas ao inverter os lados`, async t => {
+    const store = await create()
+    t.after(() => store.close())
+    const groupId = randomUUID(), batchId = randomUUID()
+    await store.createGroup({ id: groupId, name: 'Decks', players: players.slice(0, 2), now: start })
+    await store.claimPlayers({ groupId, limit: 8, now: start, batchId })
+    const original = game(1)
+    await store.finishPlayer({ tag: A, batchId, matches: [original], now: start })
+    assert.deepEqual((await store.getSnapshot(groupId)).matches[0].left.cards, [])
+    const aCards = [{ id: 26000000, name: 'Knight', elixirCost: 3, imageUrl: 'https://api-assets.clashroyale.com/cards/300/knight.png' }]
+    const bCards = [{ id: 26000001, name: 'Archers', elixirCost: 3, imageUrl: null }]
+    const withDecks = { ...original, left: { ...original.right, cards: bCards }, right: { ...original.left, cards: aCards } }
+    assert.equal((await store.finishPlayer({ tag: B, batchId, matches: [withDecks], now: start })).recorded, 0)
+    let snapshot = await store.getSnapshot(groupId)
+    assert.deepEqual(snapshot.matches[0].left.cards, aCards)
+    assert.deepEqual(snapshot.matches[0].right.cards, bCards)
+    assert.equal(snapshot.totalMatches, 1)
+    assert.equal(snapshot.headToHead.find(row => row.playerTag === A).wins, 1)
+    const nextBatch = randomUUID(), later = '2026-11-01T12:01:00.000Z'
+    await store.claimPlayers({ groupId, limit: 8, now: later, batchId: nextBatch })
+    await store.finishPlayer({ tag: A, batchId: nextBatch, matches: [original], now: later })
+    snapshot = await store.getSnapshot(groupId)
+    assert.deepEqual(snapshot.matches[0].left.cards, aCards)
+    assert.deepEqual(snapshot.matches[0].right.cards, bCards)
+  })
   test(`${name}: reserva compartilhada permite novo lote em 30 segundos, sem duplicar consultas entre abas`, async t => {
     const store = await create()
     t.after(() => store.close())

@@ -1,4 +1,5 @@
 import { parseGroupTags } from '../../shared/playerTag.js'
+import { normalizeBattleCards } from '../../shared/battleCards.js'
 import { ApiError } from '../clashRoyale.mjs'
 import { GROUP_POLL_INTERVAL_MS } from '../../shared/groupTiming.js'
 
@@ -42,10 +43,14 @@ export function canonicalMatch(match) {
 }
 
 export function storedMatch(row) {
+  function cards(value) {
+    try { return normalizeBattleCards(typeof value === 'string' ? JSON.parse(value) : value) }
+    catch { return [] }
+  }
   return {
     id: row.id, playedAt: row.played_at,
-    left: { id: row.left_tag, name: row.left_name, crowns: row.left_crowns },
-    right: { id: row.right_tag, name: row.right_name, crowns: row.right_crowns },
+    left: { id: row.left_tag, name: row.left_name, crowns: row.left_crowns, cards: cards(row.left_cards) },
+    right: { id: row.right_tag, name: row.right_name, crowns: row.right_crowns, cards: cards(row.right_cards) },
   }
 }
 
