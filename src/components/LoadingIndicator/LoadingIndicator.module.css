@@ -3,10 +3,11 @@
 .inline { display: inline-flex; vertical-align: middle; }
 .screen { position: fixed; inset: 0; z-index: 10; pointer-events: none; color: #d7eaff; font-size: 13px; text-align: center; }
 .screen .frame { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
-.screen .label { position: absolute; top: calc(50% + 32px); left: 20px; right: 20px; }
+.screen .label { position: absolute; top: calc(50% + 54px); left: 20px; right: 20px; }
 .frame { display: inline-flex; flex: 0 0 auto; padding: 3px; }
 .helmet { display: block; width: 36px; height: 36px; object-fit: contain; transform-origin: center; animation: beat 1s ease-in-out infinite; }
 .inline .helmet { width: 20px; height: 20px; }
+.screen .helmet { width: 72px; height: 72px; }
 /* Beat inspired by https://loading.io/animation/, with a subtler scale. */
 @keyframes beat {
   0%, 100% { transform: scale(1); }

@@ -1,7 +1,8 @@
 # Indicador de carregamento
 
 `LoadingIndicator` centraliza a imagem, a animação e os anúncios de carregamento.
-O capacete mede 36 px nos blocos de conteúdo e 20 px em botões e avisos em linha.
+O capacete mede 72 px no carregamento central da tela, 36 px nos blocos de
+conteúdo e 20 px em botões e avisos em linha.
 Nos carregamentos de sessão e na carga inicial da Home, `fullscreen` fixa
 o capacete no centro da janela, com o texto logo abaixo. A navegação continua
 acessível e as atualizações em segundo plano preservam o conteúdo da página.
@@ -19,7 +20,7 @@ o indicador anuncia o estado com `role="status"`.
 O arquivo enviado continha um quadriculado opaco. O recorte com transparência
 foi produzido com a ferramenta integrada ImageGen, preservando o desenho.
 O original editado está em `src/assets/loading-helmet.png`; as versões WebP
-de 48 e 96 px servidas pelo aplicativo ficam em `public/loading/`.
+de 48, 96 e 192 px servidas pelo aplicativo ficam em `public/loading/`.
 
 Prompt utilizado:
 
