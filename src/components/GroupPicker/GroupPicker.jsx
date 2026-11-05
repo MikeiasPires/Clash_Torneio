@@ -1,7 +1,8 @@
 import { Link } from 'react-router'
+import LoadingIndicator from '../LoadingIndicator/LoadingIndicator.jsx'
 import styles from './GroupPicker.module.css'
 
-function GroupPicker({ dashboard, variant = 'default' }) {
+function GroupPicker({ dashboard, variant = 'default', showLoading = true }) {
   const { groups, groupId, selectGroup, error, loading } = dashboard
   return (
     <div className={[styles.picker, variant === 'home' && styles.home].filter(Boolean).join(' ')}>
@@ -12,7 +13,7 @@ function GroupPicker({ dashboard, variant = 'default' }) {
         </select>
       </label>
       <Link to="/grupos">{variant === 'home' ? 'Grupos' : 'Ver grupos'}</Link>
-      {loading && <p role="status">Carregando registros…</p>}
+      {loading && showLoading && <p><LoadingIndicator inline>Carregando registros…</LoadingIndicator></p>}
       {error && <p role="alert">{error}</p>}
     </div>
   )

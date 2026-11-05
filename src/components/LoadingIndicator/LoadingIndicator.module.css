@@ -1,0 +1,16 @@
+.indicator { align-items: center; justify-content: center; gap: 8px; font: inherit; color: inherit; line-height: 1.5; }
+.block { display: flex; flex-direction: column; padding: 16px 0; font-size: 13px; }
+.inline { display: inline-flex; vertical-align: middle; }
+.frame { display: inline-flex; flex: 0 0 auto; padding: 3px; }
+.helmet { display: block; width: 36px; height: 36px; object-fit: contain; transform-origin: center; animation: beat 1s ease-in-out infinite; }
+.inline .helmet { width: 20px; height: 20px; }
+/* Beat inspired by https://loading.io/animation/, with a subtler scale. */
+@keyframes beat {
+  0%, 100% { transform: scale(1); }
+  34% { transform: scale(1.12); }
+  68% { transform: scale(1.016); }
+  84% { transform: scale(1.056); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .helmet { animation: none; }
+}

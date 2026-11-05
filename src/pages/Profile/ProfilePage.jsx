@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router'
 import { useAuth } from '../../auth/useAuth.js'
 import ProfileSettingsModal from './ProfileSettingsModal.jsx'
 import ProfileIcon from './ProfileIcon.jsx'
+import LoadingIndicator from '../../components/LoadingIndicator/LoadingIndicator.jsx'
 import styles from './ProfilePage.module.css'
 
 function ProfilePage() {
@@ -41,7 +42,7 @@ function ProfilePage() {
       <span>{user.phrase ? 'Seu recado aparece na home quando você liderar o grupo.' : 'Adicione a sua em Editar perfil.'}</span>
     </section>
     <p className={styles.message} role="status">{message}</p>{error && <p className={styles.error} role="alert">{error}</p>}
-    <button className={styles.logout} type="button" disabled={busy} onClick={() => void logout()}><ProfileIcon name="logout" />{busy ? 'Saindo…' : 'Sair da conta'}</button>
+    <button className={styles.logout} type="button" disabled={busy} aria-busy={busy} onClick={() => void logout()}>{busy ? <LoadingIndicator inline announce={false}>Saindo…</LoadingIndicator> : <><ProfileIcon name="logout" />Sair da conta</>}</button>
     {editing && <ProfileSettingsModal user={user} onDismiss={() => setEditing(false)} onSaved={message => { setEditing(false); setMessage(message) }} />}
   </section>
 }

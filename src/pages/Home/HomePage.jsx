@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import { ranking as demoRanking } from '../Trophies/ranking.js'
 import GroupPicker from '../../components/GroupPicker/GroupPicker.jsx'
+import LoadingIndicator from '../../components/LoadingIndicator/LoadingIndicator.jsx'
 import { useGroupDashboard } from '../../hooks/useGroupDashboard.js'
 import { useAuth } from '../../auth/useAuth.js'
 import HomeIcon from './HomeIcon.jsx'
@@ -39,13 +40,12 @@ function HomePage() {
   return (
     <section className={styles.page} aria-labelledby="home-title">
       <header className={styles.header}>
-        <div className={styles.topline}><span className={styles.brand}><HomeIcon name="crown" />CLASH DOS AMIGUI</span><Link to="/perfil">Meu perfil <HomeIcon name="arrow" /></Link></div>
         <p className={styles.eyebrow}>SUA TURMA. SEUS DUELOS.</p>
         <h1 id="home-title">De olho <span>na coroa.</span></h1>
         <p className={styles.description}>Quem mais vence os x1 da turma.</p>
       </header>
 
-      {!demo && <GroupPicker dashboard={dashboard} variant="home" />}
+      {!demo && <GroupPicker dashboard={dashboard} variant="home" showLoading={!initialLoading} />}
 
       {champion ? (
         <article className={styles.champion} aria-labelledby="champion-name">
@@ -62,10 +62,12 @@ function HomePage() {
         </article>
       ) : (
         <div className={styles.empty} aria-busy={initialLoading}>
+          {initialLoading ? <LoadingIndicator>Preparando a arena…</LoadingIndicator> : <>
           <span className={styles.emptyIcon}><HomeIcon name="crown" /></span>
-          <h2>{initialLoading ? 'Preparando a arena…' : dashboard.error ? 'A arena não carregou' : 'A coroa espera um campeão'}</h2>
-          <p role={initialLoading ? 'status' : undefined}>{initialLoading ? 'Buscando os registros da sua turma.' : dashboard.error ? 'Não foi possível carregar os registros. Tente novamente em instantes.' : dashboard.groups.length ? 'O primeiro x1 registrado vai revelar quem começa no topo do grupo.' : user?.isAdmin ? 'Crie seu grupo e convide a turma para começar a registrar os duelos.' : 'Abra o convite enviado pelo administrador para entrar no seu grupo.'}</p>
-          {!initialLoading && (dashboard.error ? <button type="button" onClick={dashboard.refresh}>Tentar novamente <HomeIcon name="arrow" /></button> : <Link to="/grupos">{dashboard.groups.length ? 'Ver meu grupo' : user?.isAdmin ? 'Criar meu grupo' : 'Ver meus grupos'}<HomeIcon name="arrow" /></Link>)}
+          <h2>{dashboard.error ? 'A arena não carregou' : 'A coroa espera um campeão'}</h2>
+          <p>{dashboard.error ? 'Não foi possível carregar os registros. Tente novamente em instantes.' : dashboard.groups.length ? 'O primeiro x1 registrado vai revelar quem começa no topo do grupo.' : user?.isAdmin ? 'Crie seu grupo e convide a turma para começar a registrar os duelos.' : 'Abra o convite enviado pelo administrador para entrar no seu grupo.'}</p>
+          {dashboard.error ? <button type="button" onClick={dashboard.refresh}>Tentar novamente <HomeIcon name="arrow" /></button> : <Link to="/grupos">{dashboard.groups.length ? 'Ver meu grupo' : user?.isAdmin ? 'Criar meu grupo' : 'Ver meus grupos'}<HomeIcon name="arrow" /></Link>}
+          </>}
         </div>
       )}
 

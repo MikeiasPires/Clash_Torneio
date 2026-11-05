@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import GroupPicker from '../../components/GroupPicker/GroupPicker.jsx'
+import LoadingIndicator from '../../components/LoadingIndicator/LoadingIndicator.jsx'
 import { useGroupDashboard } from '../../hooks/useGroupDashboard.js'
 import { createGroup } from '../../services/groupsApi.js'
 import { parseGroupTags } from '../../../shared/playerTag.js'
@@ -13,21 +14,21 @@ function GroupsPage() {
   const manager = Boolean(user?.isAdmin)
   const [name, setName] = useState('')
   const [tags, setTags] = useState('')
-  const [busy, setBusy] = useState(false)
+  const [busy, setBusy] = useState('')
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
   const request = useRef(null)
   const snapshot = dashboard.snapshot
   useEffect(() => () => request.current?.abort(), [])
 
-  async function execute(action) {
+  async function execute(action, operation) {
     request.current?.abort()
     const controller = new AbortController()
     request.current = controller
-    setBusy(true); setMessage(''); setError('')
+    setBusy(operation); setMessage(''); setError('')
     try { await action(controller.signal) }
     catch (error) { if (!controller.signal.aborted) setError(error.message) }
-    finally { if (!controller.signal.aborted) { setBusy(false); dashboard.refresh() } }
+    finally { if (!controller.signal.aborted) { setBusy(''); dashboard.refresh() } }
   }
 
   function submitGroup(event) {
@@ -37,7 +38,7 @@ function GroupsPage() {
       dashboard.selectGroup(result.group.id)
       setName(''); setTags('')
       setMessage('Grupo criado. O monitor vai consultar os jogadores e registrar os x1 encontrados.')
-    })
+    }, 'create')
   }
 
   return (
@@ -55,13 +56,13 @@ function GroupsPage() {
         <label htmlFor="group-tags">Tags dos jogadores (opcional)</label>
         <textarea id="group-tags" value={tags} onChange={event => setTags(event.target.value)} rows={3} maxLength={2000} placeholder={'Deixe vazio para preencher o grupo por convites.\nOu cole #TAG Nome do amigo, uma pessoa por linha.'} aria-describedby="tags-help" spellCheck={false} disabled={busy} />
         <p id="tags-help">Você pode criar o grupo só com o nome e gerar um convite. Se quiser adicionar jogadores agora, informe até 20 tags. As consultas começam com pelo menos dois membros.</p>
-        <button type="submit" disabled={busy}>{busy ? 'Processando…' : 'Criar grupo'}</button>
+        <button type="submit" disabled={Boolean(busy)} aria-busy={busy === 'create'}>{busy === 'create' ? <LoadingIndicator inline announce={false}>Criando grupo…</LoadingIndicator> : 'Criar grupo'}</button>
       </form>}
       <p className={styles.message} role="status">{message}</p>
       {error && <p className={styles.error} role="alert">{error}</p>}
       <GroupPicker dashboard={dashboard} />
       {snapshot && <GroupManagement key={snapshot.group.id} snapshot={snapshot}
-        canManage={manager} busy={busy || dashboard.loading}
+        canManage={manager} busy={Boolean(busy || dashboard.loading)} pendingAction={busy}
         execute={execute} setMessage={setMessage} onDeleted={dashboard.forgetGroup} />}
       <p className={styles.notice}>Com o grupo ativo, as partidas são consultadas automaticamente a cada 30 segundos enquanto alguém acompanha o grupo no aplicativo. Cada lote consulta até 8 jogadores. Partidas antigas fora da API não podem ser recuperadas.</p>
     </section>

@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router'
 import { useAuth } from '../../auth/useAuth.js'
 import { useInvite } from '../../hooks/useInvite.js'
 import { loginAccount } from '../../services/accountApi.js'
+import Brand from '../../components/Brand/Brand.jsx'
+import LoadingIndicator from '../../components/LoadingIndicator/LoadingIndicator.jsx'
 import styles from './LoginPage.module.css'
 
 function LoginPage() {
@@ -28,21 +30,14 @@ function LoginPage() {
   return (
     <main className={styles['login-page']}>
       <header className={styles['game-brand']}>
-        <div className={styles['brand-mark']} aria-hidden="true">
-          <svg viewBox="0 0 80 80" fill="none">
-            <path d="M12 22 27 32 40 15 53 32 68 22 61 57H19L12 22Z" fill="currentColor" />
-            <path d="M22 64H58" stroke="currentColor" strokeWidth="7" strokeLinecap="round" />
-            <path d="m40 34 6 9-6 9-6-9 6-9Z" fill="#1555a0" />
-          </svg>
-        </div>
-        <p className={styles['brand-name']}>Clash <span>dos Amigui</span></p>
-        <p className={styles['brand-tagline']}>A resenha é nossa. A arena também.</p>
+        <Brand variant="hero" tagline />
       </header>
       <section className={styles['login-card']} aria-labelledby="login-title">
         <div className={styles['card-heading']}>
           <p className={styles['eyebrow']}>PREPARE SEU DECK</p>
           <h1 id="login-title">De volta à arena!</h1>
           {invite.invite && <p className={styles.description}>Entre para participar de {invite.invite.name}.</p>}
+          {invite.loading && <p className={styles.message}><LoadingIndicator inline>Conferindo convite…</LoadingIndicator></p>}
         </div>
         <form onSubmit={handleSubmit} onChange={() => setMessage('')}>
           <div className={styles['field']}>
@@ -58,7 +53,7 @@ function LoginPage() {
               </button>
             </div>
           </div>
-          <button className={styles['submit-button']} type="submit" disabled={busy}>{busy ? 'Entrando…' : 'Entrar na arena'} <span aria-hidden="true">→</span></button>
+          <button className={styles['submit-button']} type="submit" disabled={busy} aria-busy={busy}>{busy ? <LoadingIndicator inline announce={false}>Entrando…</LoadingIndicator> : <>Entrar na arena <span aria-hidden="true">→</span></>}</button>
           <p className={styles['message']} role="status">{message}</p>
         </form>
         <p className={styles.footer}>

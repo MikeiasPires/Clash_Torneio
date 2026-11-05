@@ -5,6 +5,8 @@ import { useInvite } from '../../hooks/useInvite.js'
 import { joinInvite, linkPlayer } from '../../services/accountApi.js'
 import { normalizePlayerTag } from '../../../shared/playerTag.js'
 import InviteAccountOptions from './InviteAccountOptions.jsx'
+import Brand from '../../components/Brand/Brand.jsx'
+import LoadingIndicator from '../../components/LoadingIndicator/LoadingIndicator.jsx'
 import styles from '../Login/LoginPage.module.css'
 import inviteStyles from './InvitePage.module.css'
 
@@ -41,16 +43,19 @@ function JoinGroupForm({ registration }) {
     } catch (error) { setError(error.message) }
     finally { setBusy(false) }
   }
-  return <main className={styles['login-page']}><section className={styles['login-card']} aria-labelledby="join-title">
+  return <main className={styles['login-page']}>
+    <header className={styles['game-brand']}><Brand /></header>
+    <section className={styles['login-card']} aria-labelledby="join-title">
     <div className={styles['card-heading']}><p className={styles.eyebrow}>{registration ? 'ETAPA 2 · SUA CONTA NO JOGO' : 'FALTA SÓ SUA TAG'}</p><h1 id="join-title">{linkingOnly ? 'Adicione sua tag' : 'Entre na turma'}</h1>
-      <p className={styles.description}>{linkingOnly ? 'Falta só vincular seu jogador do Clash Royale ao seu perfil.' : invite.invite ? `Informe sua tag para entrar em ${invite.invite.name}.` : 'Conferindo o convite do grupo…'}</p></div>
+      <p className={styles.description}>{linkingOnly ? 'Falta só vincular seu jogador do Clash Royale ao seu perfil.' : invite.invite ? `Informe sua tag para entrar em ${invite.invite.name}.` : 'Informe sua tag para participar do grupo.'}</p></div>
+    {invite.loading && <p className={styles.message}><LoadingIndicator inline>Conferindo convite…</LoadingIndicator></p>}
     {invite.error && <p className={styles.message} role="alert">{invite.error}</p>}
     <form onSubmit={submit}>
       <div className={styles.field}><label htmlFor="join-tag">Tag do Clash Royale</label>
         <input id="join-tag" value={tag} onChange={event => { setTag(event.target.value); setError('') }} placeholder="Digite sua tag, ex.: #P0LYQ" maxLength={16} autoCapitalize="characters" autoComplete="off" spellCheck={false} aria-describedby="join-tag-help" disabled={busy} required /></div>
       <p id="join-tag-help" className={styles.help}>Informe a tag de quem está entrando. No Clash Royale, abra o perfil e copie o código que começa com #. A letra O será interpretada como zero.</p>
       {auth.user.playerTag && <div className={inviteStyles.linkedTag}><p>Esta conta já está vinculada a <strong>{auth.user.playerTag}</strong>. Para cadastrar outra pessoa, use a conta dela.</p><button className={inviteStyles.useTag} type="button" disabled={busy} onClick={() => { setTag(auth.user.playerTag); setError('') }}>Usar minha tag vinculada</button></div>}
-      <button className={styles['submit-button']} type="submit" disabled={busy || (!linkingOnly && !invite.invite)}>{busy ? 'Confirmando tag…' : linkingOnly ? 'Confirmar tag e finalizar' : 'Confirmar tag e entrar'}</button>
+      <button className={styles['submit-button']} type="submit" disabled={busy || (!linkingOnly && !invite.invite)} aria-busy={busy}>{busy ? <LoadingIndicator inline announce={false}>Confirmando tag…</LoadingIndicator> : linkingOnly ? 'Confirmar tag e finalizar' : 'Confirmar tag e entrar'}</button>
       {error && <p className={styles.message} role="alert">{error}</p>}
     </form>
     {invite.token && <InviteAccountOptions suffix={invite.suffix} disabled={busy} />}

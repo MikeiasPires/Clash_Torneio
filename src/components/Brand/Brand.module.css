@@ -1,0 +1,15 @@
+.brand { display: flex; align-items: center; color: #fff7e7; }
+.logo { display: block; flex-shrink: 0; object-fit: contain; filter: drop-shadow(0 5px 10px #03172e40); }
+.name { font-family: var(--font-display); font-weight: 400; line-height: 1.05; text-transform: uppercase; text-shadow: 0 2px 0 #092c55; }
+.name > span { display: block; margin-top: 3px; color: var(--gold); font-size: .77em; }
+.compact { gap: 10px; text-align: left; }
+.compact .logo { width: 48px; height: 48px; }
+.compact .name { font-size: 22px; }
+.hero { flex-direction: column; text-align: center; }
+.hero .logo { width: 128px; height: 128px; margin-bottom: 16px; }
+.hero .name { font-size: clamp(38px, 7vw, 48px); }
+.tagline { margin: 15px 0 0; color: #d4eaff; font-size: 13px; font-weight: 700; }
+@media (max-width: 400px) {
+  .hero .logo { width: 104px; height: 104px; }
+  .compact .name { font-size: 19px; }
+}
