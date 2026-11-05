@@ -1,6 +1,9 @@
 .indicator { align-items: center; justify-content: center; gap: 8px; font: inherit; color: inherit; line-height: 1.5; }
 .block { display: flex; flex-direction: column; padding: 16px 0; font-size: 13px; }
 .inline { display: inline-flex; vertical-align: middle; }
+.screen { position: fixed; inset: 0; z-index: 10; pointer-events: none; color: #d7eaff; font-size: 13px; text-align: center; }
+.screen .frame { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+.screen .label { position: absolute; top: calc(50% + 32px); left: 20px; right: 20px; }
 .frame { display: inline-flex; flex: 0 0 auto; padding: 3px; }
 .helmet { display: block; width: 36px; height: 36px; object-fit: contain; transform-origin: center; animation: beat 1s ease-in-out infinite; }
 .inline .helmet { width: 20px; height: 20px; }

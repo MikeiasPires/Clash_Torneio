@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import { ranking as demoRanking } from '../Trophies/ranking.js'
 import GroupPicker from '../../components/GroupPicker/GroupPicker.jsx'
-import LoadingIndicator from '../../components/LoadingIndicator/LoadingIndicator.jsx'
+import SessionLoading from '../../components/SessionLoading/SessionLoading.jsx'
 import { useGroupDashboard } from '../../hooks/useGroupDashboard.js'
 import { useAuth } from '../../auth/useAuth.js'
 import HomeIcon from './HomeIcon.jsx'
@@ -37,6 +37,8 @@ function HomePage() {
   const groupQuery = demo ? '?demo=1' : dashboard.groupId ? `?grupo=${encodeURIComponent(dashboard.groupId)}` : ''
   const initialLoading = !demo && dashboard.loading && !dashboard.snapshot && !dashboard.error
 
+  if (initialLoading) return <SessionLoading>Preparando a arena…</SessionLoading>
+
   return (
     <section className={styles.page} aria-labelledby="home-title">
       <header className={styles.header}>
@@ -45,7 +47,7 @@ function HomePage() {
         <p className={styles.description}>Quem mais vence os x1 da turma.</p>
       </header>
 
-      {!demo && <GroupPicker dashboard={dashboard} variant="home" showLoading={!initialLoading} />}
+      {!demo && <GroupPicker dashboard={dashboard} variant="home" />}
 
       {champion ? (
         <article className={styles.champion} aria-labelledby="champion-name">
@@ -61,13 +63,11 @@ function HomePage() {
           {demo ? <ChampionPhrase key={`phrase:${champion.id}`} player={champion} /> : <div className={styles.phraseSection}><p className={styles.phraseLabel}>PALAVRA DO CAMPEÃO</p><blockquote className={styles.phrase}>{champion.phrase || 'O campeão ainda não deixou sua frase.'}</blockquote></div>}
         </article>
       ) : (
-        <div className={styles.empty} aria-busy={initialLoading}>
-          {initialLoading ? <LoadingIndicator>Preparando a arena…</LoadingIndicator> : <>
+        <div className={styles.empty}>
           <span className={styles.emptyIcon}><HomeIcon name="crown" /></span>
           <h2>{dashboard.error ? 'A arena não carregou' : 'A coroa espera um campeão'}</h2>
           <p>{dashboard.error ? 'Não foi possível carregar os registros. Tente novamente em instantes.' : dashboard.groups.length ? 'O primeiro x1 registrado vai revelar quem começa no topo do grupo.' : user?.isAdmin ? 'Crie seu grupo e convide a turma para começar a registrar os duelos.' : 'Abra o convite enviado pelo administrador para entrar no seu grupo.'}</p>
           {dashboard.error ? <button type="button" onClick={dashboard.refresh}>Tentar novamente <HomeIcon name="arrow" /></button> : <Link to="/grupos">{dashboard.groups.length ? 'Ver meu grupo' : user?.isAdmin ? 'Criar meu grupo' : 'Ver meus grupos'}<HomeIcon name="arrow" /></Link>}
-          </>}
         </div>
       )}
 

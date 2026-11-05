@@ -1,9 +1,7 @@
 import LoadingIndicator from '../LoadingIndicator/LoadingIndicator.jsx'
 
 function SessionLoading({ children }) {
-  return <div className="session-loading">
-    <LoadingIndicator>{children}</LoadingIndicator>
-  </div>
+  return <LoadingIndicator fullscreen>{children}</LoadingIndicator>
 }
 
 export default SessionLoading

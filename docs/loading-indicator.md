@@ -2,6 +2,9 @@
 
 `LoadingIndicator` centraliza a imagem, a animação e os anúncios de carregamento.
 O capacete mede 36 px nos blocos de conteúdo e 20 px em botões e avisos em linha.
+Nos carregamentos de sessão e na carga inicial da Home, `fullscreen` fixa
+o capacete no centro da janela, com o texto logo abaixo. A navegação continua
+acessível e as atualizações em segundo plano preservam o conteúdo da página.
 O efeito se inspira no [beat do Loading.io](https://loading.io/animation/),
 com dois pulsos por segundo e amplitude reduzida (máximo de 1,12×).
 A animação usa apenas CSS local, sem dependência ou CDN, e fica desativada
